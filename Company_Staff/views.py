@@ -32358,5 +32358,44 @@ def bill_overview(request,pk):
             'company':company,
         }
         return render(request, 'zohomodules/bill/bill_overview.html',context)
-        
+
+
+
+
+
+
+
 #End
+
+
+
+
+
+def view_reports(request):
+    if 'login_id' in request.session:
+        if 'login_id' not in request.session:
+            return redirect('/')
+        
+        log_id = request.session['login_id']
+        log_details = LoginDetails.objects.get(id=log_id)
+        
+        if log_details.user_type == 'Staff':
+            dash_details = StaffDetails.objects.get(login_details=log_details)
+            company_details = CompanyDetails.objects.get(id=dash_details.company.id)
+        else:
+            dash_details = CompanyDetails.objects.get(login_details=log_details)
+            company_details = dash_details
+        
+        all_modules = ZohoModules.objects.get(company=company_details, status='New')
+
+        # Assuming you have a model for reports and you want to fetch all reports
+      
+
+        return render(request, 'zohomodules/report.html', {
+            'details': dash_details,
+            'allmodules': all_modules,
+           
+            'log_details': log_details
+        })
+    else:
+        return redirect('/')

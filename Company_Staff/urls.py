@@ -755,6 +755,11 @@ urlpatterns = [
     path('bill_overview/<int:pk>',views.bill_overview,name='bill_overview'),
     #End
     
+
+
+
+    path('view_reports',views.view_reports,name='view_reports'),
+
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
