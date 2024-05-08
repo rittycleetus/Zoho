@@ -620,6 +620,7 @@
               </div>
             </li>
             
+         
             <!--  Reports modules -->
             <li class="sidebar-item">
               <button class="btn dropdown-btn" style="margin-top: 10px; border: none;outline: none; color: black;width: 100%;text-align: left;color: white;">
@@ -628,35 +629,28 @@
                 </span>
                 <span><label>Reports</label></span>
                 <i class="fa fa-caret-down" style="margin-left: 50%;"></i>
-              </button>
-              <div id="reports-dropdown-container" class="dropdown-container" style="background-color: rgb(0, 0, 0);padding: 20px;justify-content: center;color: white;display: none;">
-                {% if allmodules.reports == 1  %}
-                <button class="btn dropdown-btn" id="accounts-receivable-btn" style="border: none;outline: none; color: black;width: 100%;text-align: left;color: white;">
-                    <span>
-                        <label><i style="margin-right: 10px;"></i></label>
-                    </span>
-                    <span><label>Receivables</label></span>
-                    <i class="fa fa-caret-down" style="margin-left: 100%;"></i>
+               
+                <button class="btn dropdown-btn" style="margin-top: 10px; border: none;outline: none; color: black;width: 100%;text-align: left;color: white;">
+                  
+                  <span><label  style="margin-left: 10px;">Account Receivables</label></span>
+                  <i class="fa fa-caret-down" style="margin-left: 20%;"></i>
                 </button>
-                <div id="accounts-receivable-dropdown" class="dropdown-container" style="background-color: rgb(0, 0, 0);padding: 20px;justify-content: center;color: white;display: none;">
-                    <!-- No link for Accounts Receivable dropdown -->
-                    <!-- When clicked, it will reveal the Invoice Details link -->
-                    <a href="" class="d-flex align-items-center gap-2 dropdown-item">
-                        <div class="d-flex">
-                            <p class="mb-0 fs-3">Invoice Details</p>
-                            <a href="{% url 'view_reports' %}"><i class="fa fa-plus text-white" ></i></a>
-                        </div>
-                    </a>
-                </div>
-              
-            
+                <div class="dropdown-container" style="background-color: rgb(0, 0, 0);padding: 20px;justify-content: center;color: white;margin-left: 15%;">
+
+                {% if allmodules.reports == 1  %}
+                <a href="{% url 'view_reports' %}" class="d-flex align-items-center gap-2 dropdown-item">
+                  <div class="d-flex">
+                    <p class="mb-0 fs-3">Invoice Details<i class="fa fa-plus text-white" style="margin-left:50%"></i></p>
+                  </div>
+                </a>
                 <hr>
                 {% endif %}
                 
               </div>
-            </li>
+              </button>
 
-            
+              
+            </li>
             
           </ul>
 

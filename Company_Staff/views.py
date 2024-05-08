@@ -32371,31 +32371,26 @@ def bill_overview(request,pk):
 
 
 
+
+
+
+
 def view_reports(request):
     if 'login_id' in request.session:
-        if 'login_id' not in request.session:
-            return redirect('/')
-        
         log_id = request.session['login_id']
-        log_details = LoginDetails.objects.get(id=log_id)
-        
-        if log_details.user_type == 'Staff':
-            dash_details = StaffDetails.objects.get(login_details=log_details)
-            company_details = CompanyDetails.objects.get(id=dash_details.company.id)
-        else:
+        log_details= LoginDetails.objects.get(id=log_id)
+        if log_details.user_type == 'Company':
+            cmp = CompanyDetails.objects.get(login_details = log_details)
             dash_details = CompanyDetails.objects.get(login_details=log_details)
-            company_details = dash_details
-        
-        all_modules = ZohoModules.objects.get(company=company_details, status='New')
+        else:
+            cmp = StaffDetails.objects.get(login_details = log_details).company
+            dash_details = StaffDetails.objects.get(login_details=log_details)
 
-        # Assuming you have a model for reports and you want to fetch all reports
-      
-
-        return render(request, 'zohomodules/report.html', {
-            'details': dash_details,
-            'allmodules': all_modules,
-           
-            'log_details': log_details
-        })
+        rec = RecurringInvoice.objects.filter(company = cmp)
+        allmodules= ZohoModules.objects.get(company = cmp)
+        context = {
+            'invoices': rec, 'allmodules':allmodules, 'details':dash_details
+        }
+        return render(request, 'zohomodules/report/report.html', context)
     else:
         return redirect('/')

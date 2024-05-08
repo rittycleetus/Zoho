@@ -1,51 +1,248 @@
 {% extends 'base.html' %}
-{% block content %}
 {% load static %}
-{% load social_share %}
+{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Title</title>
-    <!-- Bootstrap CSS -->
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"> -->
-    <!-- Bootstrap JS -->
-    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-xxxxxx" crossorigin="anonymous" />
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
-    <!-- Select2 CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
-    <!-- Custom Styles -->
-    <style>
-        /* Your CSS styles go here */
-    </style>
-</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link href='https://unpkg.com/css.gg@2.0.0/icons/css/trash.css' rel='stylesheet'>
+<script src="https://cdn.jsdelivr.net/bootstrap.datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 
-<body>
-    <!-- Your HTML content goes here -->
-    <div style="background-color: black; padding: 20px;">
-        <h1 style="color: white;">INVOICE Details</h1>
-        <div>
-            <button onclick="window.print()" style="background-color: white; color: black; border: none; padding: 10px 20px; margin-right: 10px;">Print</button>
-            <button onclick="generatePDF()" style="background-color: white; color: black; border: none; padding: 10px 20px; margin-right: 10px;">PDF</button>
-            <button onclick="exportData()" style="background-color: white; color: black; border: none; padding: 10px 20px; margin-right: 10px;">Export</button>
-            <button onclick="share()" style="background-color: white; color: black; border: none; padding: 10px 20px;">Share</button>
+
+
+<div class="body-wrapper">
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="" class="text-warning-emphasis">Dashboard</a></li>
+                <li class="breadcrumb-item"><a class="text-warning-emphasis">Reports</a></li>
+                <li class="breadcrumb-item" aria-current="page">Accounts Recievables</li>
+                <li class="breadcrumb-item" aria-current="page">Invoice Details</li>
+            </ol>
+        </nav>
+
+        <!-- First Container for Buttons -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="card mb-5 p-2" style="background-color: black; border-radius: 1vh;">
+                    <h1 class="text-center" style="color: white; font-weight: bolder;">INVOICE DETAILS</h1>
+                    <!-- Buttons for print, export, pdf, and share -->
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-md-6 d-flex justify-content-around">
+                            <button class="btn btn-outline-warning">Print</button>
+                            <button class="btn btn-outline-warning">Export</button>
+                            <button class="btn btn-outline-warning">PDF</button>
+                            <button class="btn btn-outline-warning">Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Container for Table -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-5 p-5" style="background-color: black; border-radius: 1vh;">
+                    <div class="container-fluid">
+                        <table class="table table-responsive-md mt-4" id="recurring_inv_table">
+                            <thead>
+                                <tr class="text-center text-white">
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Rec. Invoice No.</th>
+                                    <th>Name</th>
+                                    <th>Mail ID</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for a in invoices %}
+                                <tr class='clickable-row text-center' onclick="window.location.href=`{% url 'viewRecurringInvoice' a.id %}`">
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ a.start_date }}</td>
+                                    <td>{{ a.rec_invoice_no }}</td>
+                                    <td>{{ a.customer.first_name }} {{ a.customer.last_name }}</td>
+                                    <td>{{ a.customer_email}}</td>
+                                    <td>{{ a.grandtotal }}</td>
+                                    <td>{{ a.status }}</td>
+                                    <td>{{ a.balance }}</td>
+                                </tr>
+                                {% endfor %}  
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div style="background-color: black; padding: 20px; margin-top: 20px;">
-        <!-- Second container content goes here -->
+</div>
+<!-- 
+<!-- Import Estimate modal -->
+<!-- <div class="modal fade" id="importModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="background-color: #3b3b3b;">
+            <div class="modal-header">
+                <h3 class="modal-title text-light" id="exampleModalLabel">Import Recurring Invoice</h3>
+                <button type="button" class="btn close text-white" data-bs-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true" style="font-size: x-large;">&times;</span>
+                </button>
+              </div>
+            <div class="modal-body mx-3 rounded-1" style="background-color: #000;">
+                <div class="file_instructions">
+                    <div class="alert alert-danger" role="alert">
+                        <span class="fw-bolder">IMPORTANT:</span>
+                        <p>File should have 2 sheets named 'recurring_invoice' & 'items' and column name & order should be in the given formate(Uppercase).</p>
+                        <p class="fw-bolder">Recurring Invoice sheet - SLNO*, CUSTOMER*, DATE*, PLACE OF SUPPLY*, PROFILE NAME, ENTRY TYPE, RI NO*, TERMS*, REPEAT EVERY*, PRICE LIST, DESCRIPTION, SUB TOTAL*, IGST*, CGST*, SGST*, TAX AMOUNT*, ADJUSTMENT, SHIPPING CHARGE, GRAND TOTAL*, ADVANCE </p>
+                        <p class="fw-bolder">Items sheet - RI NO**, PRODUCT*, HSN*, QUANTITY*, PRICE*, TAX PERCENTAGE*, DISCOUNT, TOTAL* </p>
+                        <p>* All required columns should be filled.</p>
+                        <p>** <b>RI NO</b> is <b>SLNO</b> of recurring_invoice</p>
+                        <p>Place of supply should be in the give format with state code('Ex: [KL]-Kerala') or '[OT]-Other Territory'.</p>
+                        <p>Date format should be 'YYYY-MM-DD' or 'DD-MM-YYYY'.</p>
+                    </div>
+                </div>
+                <div class="sample_file mb-2">
+                    <a href="{% url 'downloadRecurringInvoiceSampleImportFile' %}" class="fw-bolder btn btn-outline-warning btn-sm">Download Sample File</a>
+                </div>
+                <form id="importEstimateForm" action="{% url 'importRecurringInvoiceFromExcel' %}" method="POST" class="form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="excel_file" class="form-label text-white">File</label>
+                        <input id="excel_file" class="form-control" type="file" name="excel_file" required>
+                    </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <input id="submit_import_excel" value="IMPORT" class="btn btn-outline-warning" type="submit">
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
     </div>
+</div>  -->
 
-    <!-- Custom JavaScript -->
-    <script>
-        // Your JavaScript functions go here
-    </script>
-</body>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-{% endblock %}
+<script>
+    $('#alert_close').click(function(){
+      $('#alert_danger').hide()
+    })
+
+    $(document).ready(function() {
+        var $rows = $('#recurring_inv_table tbody tr');
+        $('#search').keyup(function() {
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+            $rows.show().filter(function() {
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                return !~text.indexOf(val);
+            }).hide();
+        });
+    });
+
+    $('.dropdown-toggle').dropdown();
+
+    jQuery(document).ready(function($) {
+        $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+        });
+    });
+
+    function sorttable(col) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("recurring_inv_table");
+        switching = true;
+        
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+
+                x = rows[i].getElementsByTagName("td")[col].textContent.toLowerCase();
+                y = rows[i + 1].getElementsByTagName("td")[col].textContent.toLowerCase();
+
+                if (x > y) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+
+    function filtertable(key) {
+        var input, filter, table, tr, td, i, txtValue;
+        table = document.getElementById("recurring_inv_table");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[7];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase() == key.toUpperCase()) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function exportToExcel() {
+        var table = document.querySelector('#recurring_inv_table');
+        var ws = XLSX.utils.table_to_sheet(table);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, 'Recurring_invoice.xlsx');
+    }
+
+    function sortTable(columnIndex) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("recurring_inv_table");
+    switching = true;
+
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName("td")[columnIndex].textContent.toLowerCase();
+        y = rows[i + 1].getElementsByTagName("td")[columnIndex].textContent.toLowerCase();
+
+        if (x > y) {
+            shouldSwitch = true;
+            break;
+        }
+      }
+
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+
+  function filterTable(row,filterValue) {
+    var table = document.getElementById("recurring_inv_table");
+    var rows = table.getElementsByTagName("tr");
+
+    for (var i = 1; i < rows.length; i++) {
+      var statusCell = rows[i].getElementsByTagName("td")[row];
+
+      if (filterValue == "all" || statusCell.textContent.toLowerCase() == filterValue) {
+        rows[i].style.display = "";
+      } else {
+        rows[i].style.display = "none";
+      }
+    }
+  }
+</script> -->
+
+{%endblock%}
