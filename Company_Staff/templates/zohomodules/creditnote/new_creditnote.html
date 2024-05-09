@@ -533,10 +533,17 @@
                                 <input type="text" name='hsn[]' id="hsn1" placeholder='HSN' class="form-control bg-black text-white HSNCODE" readonly />
                             </td>
                             <td >
+<<<<<<< HEAD
                                 <input type="number" id="qty21"  style="display: none;" class="item-quantity2" />
                                 <input type="number" name='qty[]' id="qty1"  class="form-control bg-black text-white qty mb-1" step=0 min=1 value=0 onchange="changeItemQty(this.id)" oninput="changeItemQty(this.id)" required/>
                                 <input type="text" id="avl1" style="display: none;">
                                 <input type="text" id="hold1" value="{{i.quantity}}" style="display: none;">
+=======
+                                <input type="number" id="qty2${{forloop.counter}}"  style="display: none;" class="item-quantity2" />
+                                <input type="number" name='qty[]' id="qty1"  class="form-control bg-black text-white qty mb-1" step=0 min=1 value=0 onchange="changeItemQty(this.id)" required/>
+                                <input type="text" id="avl{{forloop.counter}}" style="display: none;">
+                                <input type="text" id="hold{{forloop.counter}}" value="{{i.quantity}}" style="display: none;">
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                                 <div class="d-flex text-white" style="font-size: 0.7rem;"><span>Available Qty:</span><span id="qtyspan1" class=''></span></div>
                             </td>
                             <td>
@@ -2545,7 +2552,11 @@ $(document).ready(function() {
                             </td>
                             <td >
                                 <input type="number" id="qty2${roinc}"  style="display: none;" class="item-quantity2" />
+<<<<<<< HEAD
                                 <input type="number" name='qty[]' id="qty${roinc}"  class="form-control bg-black text-white qty mb-1" step=0 min=1 value=0 onchange="changeItemQty(this.id)" oninput="changeItemQty(this.id)" required/>
+=======
+                                <input type="number" name='qty[]' id="qty${roinc}"  class="form-control bg-black text-white qty mb-1" step=0 min=1 value=0 onchange="changeItemQty(this.id)" required/>
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                                 <input type="text" id="avl${roinc}" style="display: none;">
                                 <input type="text" id="hold${roinc}" value="" style="display: none;">
                                 <div class="d-flex text-white" style="font-size: 0.7rem;"><span>Available Qty:</span><span id="qtyspan${roinc}" class=''></span></div>
@@ -3050,7 +3061,11 @@ $(document).ready(function() {
       var exists = false;
       var plc = $('#placeOfSupply').val();
       var PLId = $('#priceListIds').val();
+<<<<<<< HEAD
       console.log(inpId,'-----------',value)
+=======
+      
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
       $('#items-table-body tr').each(function () {
           var html = $(this).html();
           if (html != '') {
@@ -3070,7 +3085,10 @@ $(document).ready(function() {
                   alert('Select a Price List from the dropdown..!')
               }else{
                   var n = inpId.slice(4);
+<<<<<<< HEAD
                   console.log('ididididi',n)
+=======
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                   
                   $.ajax({
                       url: "{% url 'getItemDetailsAjax' %}",
@@ -3127,7 +3145,11 @@ $(document).ready(function() {
 
 
     function changeItemQty(id){
+<<<<<<< HEAD
         console.log(id,' = id');
+=======
+
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
         id_val = id.slice(3)
         var qty = document.getElementById(id).value;
         var avl_val = document.getElementById(`avl${id_val}`).innerText;
@@ -3135,12 +3157,19 @@ $(document).ready(function() {
         var invc = document.getElementById('invoiceNum').value || 0;
         console.log(invc,'invccc')
         var hold = parseInt(document.getElementById(`qty2${id_val}`).value) || 0; 
+<<<<<<< HEAD
         // var curqty = document.getElementById(`qty${id_val}`).value;
         // console.log(curqty,'currrrrr');
         
 
         console.log(invc,'invoic value -------')
         console.log('-----end qty change-------')
+=======
+        var curqty = document.getElementById(`qty${id_val}`).value;
+        console.log(curqty,'currrrrr')
+
+        console.log(invc,'invoic value -------')
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
         
             if(invc != 0){
                 var maxqty = document.getElementById(`qty2${id_val}`).value ;
@@ -3386,7 +3415,11 @@ $(document).ready(function() {
                             </td>
                             <td >
                                 <input type="number" id="qty2${roinc}"  style="display: none;"/>
+<<<<<<< HEAD
                                 <input type="number" name='qty[]' id="qty${roinc}"  class="form-control bg-black text-white qty mb-1" step=0 min=1 value=0 onchange="changeItemQty(this.id)" oninput="changeItemQty(this.id)" required/>
+=======
+                                <input type="number" name='qty[]' id="qty${roinc}"  class="form-control bg-black text-white qty mb-1" step=0 min=1 value=0 onchange="changeItemQty(this.id)" required/>
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                                 <input type="text" id="avl${roinc}" style="display: none;">
                                 <input type="text" id="hold${roinc}" value="" style="display: none;">
                                 <div class="d-flex text-white" style="font-size: 0.7rem;"><span>Available Qty:</span><span id="qtyspan${roinc}" class=''></span></div>

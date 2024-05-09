@@ -499,8 +499,19 @@ class HistorySalaryDetails(models.Model):
     company=models.ForeignKey(CompanyDetails,on_delete=models.CASCADE,null=True)
     login_details=models.ForeignKey(LoginDetails,on_delete=models.CASCADE,null=True)
     salary_details = models.ForeignKey(SalaryDetails,on_delete=models.CASCADE,null=True)
+<<<<<<< HEAD
     date=models.DateField(null=True,auto_now=True)
     action=models.CharField(max_length=100,null=True)
+=======
+    date = models.DateField(auto_now_add=True)
+    ADD = 'add'
+    EDIT = 'edit'
+    ACTION_CHOICES = [
+        (ADD, 'Add'),
+        (EDIT, 'Edit'), 
+    ]
+    action = models.CharField(max_length=7, choices=ACTION_CHOICES, default=ADD)
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 
 # ------------------------------- GOKUL KRISHNA UR -----------------------------------------
 

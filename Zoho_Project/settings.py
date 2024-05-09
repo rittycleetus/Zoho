@@ -44,7 +44,11 @@ INSTALLED_APPS = [
     'Distributor',
     'Company_Staff',
     'django_social_share',
+<<<<<<< HEAD
     'django_htmx',
+=======
+    
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 ]
 
 MIDDLEWARE = [
@@ -131,7 +135,11 @@ USE_TZ = True
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
+<<<<<<< HEAD
 STATIC_ROOT = os.path.join(BASE_DIR,'static')
+=======
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 STATIC_URL = '/static/'
 
 

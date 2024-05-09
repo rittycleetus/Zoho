@@ -51,7 +51,11 @@
                             <i  class="fas fa-sort "></i>
                           </a>
                           <div class="dropdown-menu m-2  ">
+<<<<<<< HEAD
                             <a class="dropdown-item" href="">All</a>
+=======
+                            <a class="dropdown-item" href="#">All</a>
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                             <a class="dropdown-item" href="#" onclick="sortTableByName()">Employee Name</a>
                             <a class="dropdown-item" href="#" onclick="sortTableBySalary()">Employee Salary</a>
                           </div>
@@ -80,7 +84,11 @@
                               {% for employee in employees %}
                               <tr class="clickable-row" data-href="{{ employee.id }}">
                                   <td>{{ employee.employee.first_name|upper }} {{ employee.employee.last_name|upper }}</td>
+<<<<<<< HEAD
                                   <td>₹{{ employee.salary }}</td>
+=======
+                                  <td>₹{{ employee.employee.salary }}</td>
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                                
                                 <td style="display: none;">    {{employee.status}} </td >
                               </tr>
@@ -109,6 +117,7 @@
                         <div style="display: flex;  " class="col-md-2">
                           <div >
                             
+<<<<<<< HEAD
                             <a id="toggleButton1" style="display: flex; font-weight: bold; font-size: small;" class="btn btn-outline-warning xsmall_btn"><i class="fas fa-eye" style="font-weight: bold; font-size: large;"></i>&nbsp;  <span style="font-size: small;">Overview</span></a>
                           </div>
                           &nbsp;&nbsp;  
@@ -141,6 +150,40 @@
                             <a class="btn btn-outline-warning small_btn mt-2 ms-1" href="" data-toggle="modal" data-target="#commentModal2"
                               data-toggle="tooltip" title="history">
                               <i class="fa fa-history"></i>
+=======
+                            <a id="toggleButton1" style="display: flex; align-items: center;" class="btn bg-warning text-light btn-sm"><i class="fas fa-eye"></i> &nbsp; <span>Overview</span></a>
+                          </div>
+                          &nbsp;&nbsp;  
+                          
+                          <div><a id="toggleButton2" class="btn bg-warning text-light btn-sm">Payslip</a></div>
+                      
+                        </div>
+                        <div id="overviewSection" class="col-md-10 col-lg-10 col-sm-12" style="text-align: right; ">
+                          <a href="{% url 'EditSalaryDetails' employee.id %}" class="text-dark"  >
+                            <button class="btn btn-outline-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></button>
+                          </a>
+                      
+                          <a class="btn btn-outline-warning btn-sm" href="" data-toggle="modal" data-target="#commentModal"
+                            data-toggle="tooltip" title="comment">
+                            <i class="far fa-comment"></i>
+                            <a href="{% url 'SalaryDetailsDelete' employee.id %}" class="  text-dark">
+                              <button class="btn btn-outline-warning btn-sm" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                            </a>
+
+                            <a href="{% url 'SalaryDetailsConvert' employee.id %}" class="text-dark">
+                              {% if employee.DraftorSave == "Draft" %} 
+                                  <button class="btn btn-outline-warning btn-sm" title="Convert">Convert</button>
+                              {% else %}
+                              {% endif %}
+                          </a>
+                          
+                       
+                            <a class="btn btn-outline-warning btn-sm" href="{% url 'SalaryDetailsActiveAndInnactive' employee.id  %}" >{{employee.status}}</a>
+                   
+                            <a class="btn btn-outline-warning btn-sm" href="" data-toggle="modal" data-target="#commentModal2"
+                              data-toggle="tooltip" title="history">
+                              <i class="fa-solid fa-clock-rotate-left"></i>
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                             </a>
                           </a>
                         </div>
@@ -152,8 +195,13 @@
                   
                            
 
+<<<<<<< HEAD
                           <button class="btn btn-outline-warning small_btn mt-2 ms-1" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-share"></i> 
+=======
+                          <button class="btn btn-outline-warning btn-sm" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-share"></i> 
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                         </button>
                         <ul   class="dropdown-menu dropdown-menu-dark  " aria-labelledby="dropdownMenuButton1">
                             <li><a onclick="shareViaWhatsApp()" class="dropdown-item text-light" href="">WhatsApp</a></li>  
@@ -163,13 +211,21 @@
                             &nbsp;
 
                           <a href=" " class=" text-dark">
+<<<<<<< HEAD
                             <button class="btn btn-outline-warning small_btn mt-2 ms-1" onclick="printfun()" title=""><i class="fa fa-print "  ></i> </button>
+=======
+                            <button class="btn btn-outline-warning btn-sm" onclick="printfun()" title=""><i class="fa fa-file-pdf "  ></i> </button>
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                           </a>
 
                           &nbsp;
 
                           <a href=" " class=" text-dark">
+<<<<<<< HEAD
                             <button id="pdflink" class="btn btn-outline-warning small_btn mt-2 ms-1" title="pdf"><i class="fa fa-file-pdf " aria-hidden="true"></i></button>
+=======
+                            <button id="pdflink" class="btn btn-outline-warning btn-sm" title="pdf"><i class="fa fa-file-pdf " aria-hidden="true"></i></button>
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                           </a>
                       
                           
@@ -184,6 +240,7 @@
             
                       <div id="printdiv1" style="color:black; ">
                         <div class="row " style="background-color: #acaaaafd; margin-left:1px; margin-right: 1rem; ">
+<<<<<<< HEAD
                           <div class="history_highlight pt-3 px-2 d-flex">
                             <div class="col-12 d-flex justify-content-start align-items-center">
                                 {% if last_history %}{% if last_history.action == 'CREATED' %}<p class="m-0" style="font-size: 1.07rem; font-weight: 500; color: #017500;">Created by :</p>{% else %}<p class="m-0" style="font-size: 1.07rem; font-weight: 500; color: #E91E63;">Last Edited by :</p>{% endif %}{% endif %}
@@ -191,6 +248,9 @@
                                 <span class="ms-5" style="color: #383838;">{{last_history.date}}</span>
                             </div>
                           </div>
+=======
+                      
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                           <div class="row mt-3">
                       
                             <h2 class="text-center">Employee Details</h2>
@@ -244,7 +304,11 @@
                                 <p for="">Salary :</p>
                               </div>
                               <div class="col-7">
+<<<<<<< HEAD
                                 <p class="bold " style="max-width: 15rem;word-wrap: break-word;">{{employee.salary}}</p>
+=======
+                                <p class="bold " style="max-width: 15rem;word-wrap: break-word;">{{employee.employee.salary}}</p>
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                               </div>
                             </div>
                             <div class="row mt-2">
@@ -298,7 +362,11 @@
                       
                           </div>
                           <div class="p-info col-sm ">
+<<<<<<< HEAD
                             <div class="card " style="background-color:black ; color:white; padding-left: 1rem; padding-top: 1rem;">
+=======
+                            <div class="card " style="background-color:#383838 ; color:white; padding-left: 1rem; padding-top: 1rem;">
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                               <div class="h3 mt-4 " style="margin-right: 2vh; color:white">
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Salary Details
                                 <hr style="color: orange;">
@@ -572,12 +640,20 @@
                                   </tbody>
                                 </table>
                               </div>
+<<<<<<< HEAD
                             <br>
                             <div clastallss="modal-footer">
                               <button type="button" class="btn btn-outline-warning" data-dismiss="modal">Close</button>
                               <button type="submit" class="btn btn-outline-warning">Save</button>
                             </div>
                           </div>
+=======
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-outline-warning" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-outline-warning">Save</button>
+                            </div>
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                           </form>
                         </div>
                       </div>
@@ -1031,6 +1107,7 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 </script>
  
+<<<<<<< HEAD
 <script>
   $(document).ready(function() {
     var $rows = $('#myTable tbody tr');
@@ -1044,6 +1121,9 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   $('.dropdown-toggle').dropdown();
 </script>
+=======
+
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 
 
 

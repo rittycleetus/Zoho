@@ -4,7 +4,12 @@ from django.contrib.auth.decorators import login_required
 from Register_Login.models import *
 from django.contrib import messages
 from django.http import JsonResponse
+<<<<<<< HEAD
 
+=======
+import pandas as pd
+from bs4 import BeautifulSoup
+>>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 
 # Create your views here.
 
