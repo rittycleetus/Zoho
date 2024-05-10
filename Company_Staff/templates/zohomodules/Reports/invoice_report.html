@@ -71,7 +71,27 @@
         height: 50vh;
         overflow-y: auto;
     }
-
+    .dropdown-menu {
+        background-color: #3a3a3a; 
+       }
+    .dropdown-menu li {
+        color: #fff; 
+        padding: 10px; 
+        display: flex; 
+         
+    }
+    .dropdown-menu li i {
+        margin-right: 5px; 
+    }
+    .dropdown-menu a {
+        color: black;
+    }
+    .fab.fa-whatsapp {
+        color: green; 
+    }
+    .far.fa-envelope {
+        color: rgb(255, 8, 0); 
+    }
     :root {
         --body-bg: rgb(204, 204, 204);
         --white: #ffffff;
@@ -103,16 +123,14 @@
     .page {
         background: var(--white);
         display: block;
-       
         margin: 0 auto;
         position: relative;
         box-shadow: var(--pageShadow);
     }
 
     .page[size="A4"] {
-        width: 100%;
+        width: 99%;
         height: 29.7cm;
-        
         overflow: hidden;
     }
     #reportTable {
@@ -182,7 +200,7 @@
                     {% if log_details.user_type == 'Company' %}
                         <li class="breadcrumb-item"><a href="{% url 'company_dashboard' %}" class="text-warning">Dashboard</a></li>
                     {% endif %}
-                    <li class="breadcrumb-item" aria-current="page">Invoice Details</li>
+                    <li class="breadcrumb-item" aria-current="page">Sales By Customer</li>
                 </ol>
             </nav>
           <div> 
@@ -253,9 +271,9 @@
                                 <span style="font-size: 2vh; margin-left: 0.5rem;" class="text-center">Share</span>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="share_btn">
-                                <li class="" style="color: #000;">{% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                                <li class="dropdown-item text-black"><i class="fab fa-whatsapp"></i> <a href="#" style="color: black;">{% post_to_whatsapp object_or_url "WhatsApp" %}</a></li>
                                 <!-- <a class="dropdown-item text-black">{% post_to_whatsapp object_or_url "WhatsApp" %}</a> -->
-                                <a class="dropdown-item text-black" data-toggle="modal" id="toggleEmailModal">Email</a>
+                                <a class="dropdown-item text-black" data-toggle="modal" id="toggleEmailModal"><i class="far fa-envelope"></i> Email</a>
                             </div>
                         </div>
                     </div>
@@ -268,88 +286,77 @@
         <div class="card-body">
             <div class="container-fluid">
 
-                <div  id="printReport"  class="printReportTemplate" style="display: block;">
-                    <div class="my-5 page" size="A4" >
+                <div id="printReport" class="printReportTemplate" style="display: block;">
+                    <div class="my-5 page" size="A4">
                         <div id="printdiv2">
-                            <div class="py-4 bg-warning" >
-                                <!-- <div id="ember2512" class="col-md-4 d-flex justify-content-start tooltip-container ember-view ribbon text-ellipsis"></div> -->
+                            <div class="py-4 bg-warning">
                                 <div class="col-12">
-                                        <center class="h5 text-white"><b>{{details.company_name}}</b></center>
-                                        <center class="h3 text-white"><b>INVOICE DETAILS</b></center>
-                                        {% if startDate and endDate %}
-                                        <center class="h6 text-white"><b>{{startDate}} TO {{endDate}}</b></center>
-                                        {% endif %}
-                                </div>  
-                                <!-- <div class="col-md-4 d-flex justify-content-end"></div> -->
+                                    <center class="h5 text-white"><b>{{ details.company.company_name }}</b></center>
+                                    <center class="h3 text-white"><b>INVOICE DETAILS</b></center>
+                                    {% if startDate and endDate %}
+                                    <center class="h6 text-white"><b>{{ startDate }} TO {{ endDate }}</b></center>
+                                    {% endif %}
+                                </div>
                             </div>
                             <div class="row px-1 py-1">
                                 <div class="col-12">
-
                                     <section class="product-area mt-2">
-                                        <table class="table table-responsive-md mt-4 table-hover" id="reportTable">
+                                        <table class="table table-responsive-md mt-4 table-hover" id="reportTable1">
                                             <thead>
                                                 <tr>
                                                     <th class="text-center">STATUS</th>
                                                     <th class="text-center">INVOICE DATE</th>
                                                     <th class="text-center">DUE DATE</th>
-                                                                            <th class="text-center">INVOICE NO.</th>
-                                                                            <th class="text-center">ORDER NO.</th>
-                                                                            <th class="text-center">CUSTOMER NAME</th>
-                                                                            <th class="text-center">INVOICE AMOUNT</th>
-                                                                            <th class="text-center">BALANCE</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {% for i in sale %}                                                      
-                                                                        <tr>
-                                                                            <td class="text-center">
-                                                                              {% if i.convert_to_invoice %}
-                                                                              Converted to Invoice 
-                                                                          {% elif i.convert_to_recurringinvoice %}
-                                                                              Converted to RecurringInvoice 
-                                                                          {% else %}
-                                                                          {{i.status}}
-                                                                          {% endif %}
-                                                                            </td>
-                                                                            <td class="text-center">{{i.sales_order_date|date:'d-m-Y'}}</td>
-                                                                            <td class="text-center">{{i.expiration_date|date:'d-m-Y'}}</td>
-                                                                            <td class="text-center">{{i.sales_order_number}}</td>
-                                                                            <td class="text-center">{{i.customer.first_name}} {{i.customer.last_name}}</td>
-                                                                            <td class="text-center">{{i.grand_total}}</td>
-                                                                        </tr>
-                                                                        {% endfor %}
-    
-                                                                    </tbody>
-                                                                </table>
-                                                            </section>
-                                                
-                
-    
-                                                            <section class="balance-info text-dark">
-                                                                <div class="row p-4">
-                                                                    <div class="col-10">
-                                                                        <div class="row mb-2">
-                                                                            </div>
-                                                                       </div>
-                                                                      <!-- Textbox for Total number of customers -->
-                                                                      <div class="col-4">
-                                                                        <label style="padding-top: 10px; color: #000; font-weight: bold;">Total Customers</label>
-                                                                        <input type="text" class="form-control">
-                                                                    </div>
-                                                                    
-                                                                    <!-- Total Amount -->
-                                                                    <div class="col-2" style="margin-left: 240px;">
-                                                                        <h5 style="padding-top: 10px; color: #000; font-weight: bold;">Total Amount</h5>
-                                                                        <h4 class="text-dark" style="font-weight: 600;" id="totvalue">₹<span id="superTotal">{{total_sales_amount|default:0|floatformat:2}}</span></h4>
-                                                                    </div>
-                                                                    
-                                                                    <!-- Total Balance -->
-                                                                    <div class="col-2 text-center">
-                                                                        <h5 style="padding-top: 10px; color: #000; font-weight: bold;">Total Balance</h5>
-                                                                        <h4 class="text-dark" style="font-weight: 600;" id="totvalue">₹<span id="superTotal">{{total_sales_amount|default:0|floatformat:2}}</span></h4>
-                                                                    </div>
-                                                                </div>
-                                                            </section>
+                                                    <th class="text-center">INVOICE NO.</th>
+                                                    <th class="text-center">ORDER NO.</th>
+                                                    <th class="text-center">CUSTOMER NAME</th>
+                                                    <th class="text-center">INVOICE AMOUNT</th>
+                                                    <th class="text-center">BALANCE</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for invoice_detail in reportData %}
+                                                <tr>
+                                                    <td class="text-center">{{ invoice_detail.status }}</td>
+                                                    <td class="text-center">{{ invoice_detail.invoice_date }}</td>
+                                                    <td class="text-center">{{ invoice_detail.due_date }}</td>
+                                                    <td class="text-center">{{ invoice_detail.invoice_number }}</td>
+                                                    <td class="text-center">{{ invoice_detail.order_number }}</td>
+                                                    <td class="text-center">{{ invoice_detail.customer_name }}</td>
+                                                    <td class="text-center">{{ invoice_detail.total_amount }}</td>
+                                                    <td class="text-center">{{ invoice_detail.balance }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        {% if not reportData %}
+                                        <center><h4 class="text-dark">No data available.!</h4></center>
+                                        {% endif %}
+                                    </section>
+                                    <section class="balance-info text-dark">
+                                        <div class="row p-4">
+                                            <div class="col-12">
+                                                <div class="row mb-2">
+                                                    <div class="col-4">Total customer : <p style="font-size: 19px;">{{ totcustomers|default:0 }}</p></div>
+                                                </div>
+                                                <div class="row justify-content-end">
+                                                    <div class="col-md-6">
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <h5 style="color: black; font-weight: bold;">Total Amount:</h5>
+                                                                <h4 class="text-dark" style="font-weight: 400;">Rs.<span id="totalCreditnote">{{ total_amount|default:0|floatformat:2 }}</span></h4>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <h5 style="color: black; font-weight: bold;">Total Balance:</h5>
+                                                                <h4 class="text-dark" style="font-weight: 400;" id="totvalue">Rs.<span id="superTotal">{{ total_balance|default:0|floatformat:2 }}</span></h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                             
     
                                                         </div>
                                                             
@@ -496,7 +503,7 @@
                 var opt =
                 {
                     margin: [0.5, 0.3, 0.3, 0.5],
-                    filename: 'Salesorder_report',
+                    filename: 'InvoiceDetails_report',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2 },
                     jsPDF: { unit: 'cm', format: 'letter', orientation: 'portrait' }
@@ -518,17 +525,17 @@
             }
         
             function ExportToExcel(){
-                const Table = document.getElementById("reportTable");
+                const Table = document.getElementById("reportTable1");
                 const ws = XLSX.utils.table_to_sheet(Table);
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-                XLSX.writeFile(wb, "Salesorder_report.pdf.xlsx");
+                XLSX.writeFile(wb, "InvoiceDetails_report.pdf.xlsx");
             }
         
             let sortOrder = false; // false for ascending, true for descending
         
             function sortName(colIndex) {
-            const table = document.getElementById('reportTable');
+            const table = document.getElementById('reportTable1');
             const rows = Array.from(table.rows).slice(1);
             console.log(rows)
             const isNumeric = !isNaN(parseFloat(rows[0].cells[colIndex].textContent));

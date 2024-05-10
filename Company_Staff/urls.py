@@ -754,7 +754,6 @@ urlpatterns = [
     path('bill_listout', views.bill_listout, name='bill_listout'),
     path('bill_overview/<int:pk>',views.bill_overview,name='bill_overview'),
     #End
-<<<<<<< HEAD
     path('Salesbycustomer', views.Salesbycustomer, name='Salesbycustomer'),
     path('salesByCustomerReportCustomized', views.salesByCustomerReportCustomized, name='salesByCustomerReportCustomized'),
     path('shareSalesByCustomerReportToEmail', views.shareSalesByCustomerReportToEmail, name='shareSalesByCustomerReportToEmail'),
@@ -772,14 +771,12 @@ urlpatterns = [
 
 
 
-=======
-    
 
 
 
-    path('view_reports',views.view_reports,name='view_reports'),
 
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
+
+
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)

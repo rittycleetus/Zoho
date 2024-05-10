@@ -15,6 +15,7 @@ from django.core.mail import EmailMessage
 from xhtml2pdf import pisa
 from django.template.loader import get_template
 from bs4 import BeautifulSoup
+
 import io,os
 import csv
 import math
@@ -95,10 +96,7 @@ from openpyxl import Workbook, load_workbook
 from .models import RetainerInvoice, Retaineritems, retInvoiceReference
 from django.utils import timezone
 from django.http import JsonResponse
-<<<<<<< HEAD
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
-=======
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 
 # Create your views here.
 
@@ -7556,10 +7554,7 @@ def SalaryDetailsOverViewPageWithId(request,id):
                 for holyday in holydays:
                     holyday_rows += 1
                 comment= CommentSalaryDetails.objects.filter(company=dash_details.company,salary_details=id)
-<<<<<<< HEAD
                 last_history = HistorySalaryDetails.objects.filter(salary_details=id ).last()
-=======
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                 history = HistorySalaryDetails.objects.filter(company=dash_details.company,salary_details=id )
                 total = employee.total_amount
                 total_percentage = employee.basic_salary + employee.conveyance_allowance + employee.other_allowance + employee.hra
@@ -7583,11 +7578,7 @@ def SalaryDetailsOverViewPageWithId(request,id):
                 print("Corrected HRA Amount:", hra_amount)
                 print("Corrected Other Allowance Amount:", other_allowance_amount)
                 
-<<<<<<< HEAD
                 return render(request,'zohomodules/SalaryDetails/SalaryDetailsOVerViewPage.html', {'details':dash_details,'allowance_amounts':allowance_amounts,'allmodules':allmodules,'details':dash_details, 'history':history,'last_history':last_history,'comment':comment,'employees':employees,'allmodules': allmodules,'employee':employee,'attendance':total_rows,'holyday':holyday_rows})
-=======
-                return render(request,'zohomodules/SalaryDetails/SalaryDetailsOVerViewPage.html', {'details':dash_details,'allowance_amounts':allowance_amounts,'allmodules':allmodules,'details':dash_details, 'history':history,'comment':comment,'employees':employees,'allmodules': allmodules,'employee':employee,'attendance':total_rows,'holyday':holyday_rows})
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
         if log_details.user_type == 'Company':
             dash_details = CompanyDetails.objects.get(login_details=log_details)
             allmodules= ZohoModules.objects.get(company=dash_details,status='New')
@@ -7602,10 +7593,7 @@ def SalaryDetailsOverViewPageWithId(request,id):
             for holyday in holydays:
                 holyday_rows += 1
             comment= CommentSalaryDetails.objects.filter(company=dash_details,salary_details=id)
-<<<<<<< HEAD
             last_history = HistorySalaryDetails.objects.filter(salary_details=id ).last()
-=======
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
             history = HistorySalaryDetails.objects.filter(company=dash_details,salary_details=id )
             total = employee.total_amount
             total_percentage = employee.basic_salary + employee.conveyance_allowance + employee.other_allowance + employee.hra
@@ -7627,11 +7615,7 @@ def SalaryDetailsOverViewPageWithId(request,id):
             print("Corrected Conveyance Allowance Amount:", conveyance_allowance_amount)
             print("Corrected HRA Amount:", hra_amount)
             print("Corrected Other Allowance Amount:", other_allowance_amount)
-<<<<<<< HEAD
             return render (request, 'zohomodules/SalaryDetails/SalaryDetailsOVerViewPage.html', {'allowance_amounts':allowance_amounts,'details':dash_details,'employee':employee,'comment':comment,'employees':employees,'allmodules': allmodules, 'attendance':total_rows,'holyday':holyday_rows,'last_history':last_history,'history':history} )
-=======
-            return render (request, 'zohomodules/SalaryDetails/SalaryDetailsOVerViewPage.html', {'allowance_amounts':allowance_amounts,'details':dash_details,'employee':employee,'comment':comment,'employees':employees,'allmodules': allmodules, 'attendance':total_rows,'holyday':holyday_rows} )
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 
 def CreateSalaryDetailsFunction(request):
     if request.method == 'POST':
@@ -7651,15 +7635,9 @@ def CreateSalaryDetailsFunction(request):
         holiday = request.POST.get('Holiday')
         month = request.POST.get('month')
         description = request.POST.get('Description')
-<<<<<<< HEAD
         employee_id = request.POST.get('title')
         print('emplyeeeeeeeee',employee_id)
         employee= payroll_employee.objects.get(id=employee_id)
-=======
-        employee_id = request.POST.get('employee_id')
-        print('emplyeeeeeeeee',employee_id)
-        employee= payroll_employee.objects.get(emp_number=employee_id)
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
         
         casual_leave = request.POST.get('Casual_leave')
         working_day = request.POST.get('working_days')
@@ -7726,11 +7704,7 @@ def CreateSalaryDetailsFunction(request):
                 action='CREATED'
         )
         
-<<<<<<< HEAD
         return redirect('SalaryDetailsListPage' )
-=======
-        return redirect('SalaryDetailsOverViewPageWithId', ids.id )
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
     
     return render(request, 'zohomodules/SalaryDetails/CreateSalaryDetails.html')
 
@@ -7909,13 +7883,6 @@ def DeleteCommentSalaryDetails(request, id):
     salary_id = comment.employee.salarydetails_set.first().id
     comment.delete()
     return redirect('SalaryDetailsOverViewPageWithId', salary_id)
-<<<<<<< HEAD
-=======
-
-
- 
-
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
      
 def ImportSalaryDetails(request):
     if request.method == 'POST' and 'empfile' in request.FILES:
@@ -7974,11 +7941,6 @@ def ImportSalaryDetails(request):
         return redirect('SalaryDetailsListPage')
 
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 def addEmployeeFromSalaryDetails(request):
     if request.method == 'POST':
         if 'login_id' not in request.session:
@@ -8084,13 +8046,6 @@ def addEmployeeFromSalaryDetails(request):
 
     return redirect('CreateSalaryDetails')
 
-<<<<<<< HEAD
-=======
-   
-
- 
-
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 
 def EditSalaryDetailsFunction(request,id):
     if 'login_id' in request.session:
@@ -8115,17 +8070,11 @@ def EditSalaryDetailsFunction(request,id):
         salary.casual_leave = request.POST.get('Casual_leave')
         salary.total_working_days = request.POST.get('working_day')
         salary.add_bonus = request.POST.get('bonus')
-<<<<<<< HEAD
        
         employee_id = request.POST.get('employee_id')
 
         salary.employee = get_object_or_404(payroll_employee, id=employee_id)  
         salary.salary= request.POST.get('calculated_salary')
-=======
-        employee_id = request.POST.get('employee_id')
-        salary.employee = get_object_or_404(payroll_employee, id=employee_id)  
-        # salary.salary= request.POST.get('calculated_salary')
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
         salary.save()
         existing_entry = HistorySalaryDetails.objects.filter(
             login_details=log_details,
@@ -8152,10 +8101,6 @@ def SalaryDetailsActiveAndInnactive(request, id):
             salary.status = 'Active'
         salary.save()
     return redirect('SalaryDetailsOverViewPageWithId', salary.id)
-<<<<<<< HEAD
-=======
-
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
  
 
 def SalaryDetailsAddBloodGroup(request):
@@ -8209,11 +8154,7 @@ def custdata(request):
 def SalaryDetailsDelete (request,id):
     salary_details = SalaryDetails.objects.get(id=id)
     salary_details.delete()
-<<<<<<< HEAD
     return redirect('SalaryDetailsListPage')
-=======
-    return redirect('CreateSalaryDetails')
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
  
 # ------------------------------- GOKUL KRISHNA UR -----------------------------------------
 
@@ -28066,11 +28007,7 @@ def retainer_list(request):
             dash_details = StaffDetails.objects.get(login_details=log_details)
             item = Items.objects.filter(company=dash_details.company)
             allmodules = ZohoModules.objects.get(company=dash_details.company, status='New')
-<<<<<<< HEAD
             invoices = RetainerInvoice.objects.filter(logindetails=log_details).order_by('-id')
-=======
-            invoices = RetainerInvoice.objects.filter(user=request.user.id).order_by('-id')
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
         elif log_details.user_type == 'Company':
             dash_details = CompanyDetails.objects.get(login_details=log_details)
             item = Items.objects.filter(company=dash_details)
@@ -28098,12 +28035,8 @@ def new_retainer(request):
         if 'login_id' not in request.session:
             return redirect('/')
         log_details = LoginDetails.objects.get(id=login_id)
-<<<<<<< HEAD
         # Add this print statement to check the log_details
         print("Login Details:", log_details)
-=======
-        
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
         if log_details.user_type == 'Staff':
             staff_id = request.session['login_id']
             try:
@@ -28277,18 +28210,11 @@ def create_invoice_draft(request):
         
         if log_details.user_type=='Staff':
             staff_details=StaffDetails.objects.get(login_details=log_details)
-<<<<<<< HEAD
             company=staff_details.company
             dash_details = CompanyDetails.objects.get(id=staff_details.company.id)
         else:    
             company=CompanyDetails.object.get(login_details=log_details)
             dash_details = company
-=======
-            dash_details = CompanyDetails.objects.get(id=staff_details.company.id)
-        else:    
-            dash_details = CompanyDetails.objects.get(login_details=log_details)
-        
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
         if request.method == 'POST':
             # Extract data from the request
             customer_id = request.POST.get('customer_id')
@@ -28327,11 +28253,8 @@ def create_invoice_draft(request):
                 modified_at=timezone.now(),  # Assuming modified_at is set to current time when created
                 created_by=created_by,
                 modified_by=created_by,  # Initially set modified_by to created_by
-<<<<<<< HEAD
                 logindetails=log_details,
                 company=company, 
-=======
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
             )
 
             # Use transaction.atomic() to ensure atomicity of the operations
@@ -28400,17 +28323,11 @@ def create_invoice_send(request):
         
         if log_details.user_type == 'Staff':
             staff_details=StaffDetails.objects.get(login_details=log_details)
-<<<<<<< HEAD
             company=staff_details.company
             dash_details = CompanyDetails.objects.get(id=staff_details.company.id)
         else:    
             company=CompanyDetails.objects.get(login_details=log_details)
             dash_details = company
-=======
-            dash_details = CompanyDetails.objects.get(id=staff_details.company.id)
-        else:    
-            dash_details = CompanyDetails.objects.get(login_details=log_details)
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
         
         if request.method == 'POST':
             # Extract data from the request
@@ -28431,11 +28348,7 @@ def create_invoice_send(request):
 
             # Ensure request.user is a User instance
             created_by = LoginDetails.objects.get(id=log_id)  # No need to check if it's in session since it's checked above
-<<<<<<< HEAD
             
-=======
-
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
             # Create a new instance of RetainerInvoice
             retainer_invoice = RetainerInvoice(
                 customer_name_id=customer_id,  # Assuming customer_name is a ForeignKey
@@ -28454,11 +28367,8 @@ def create_invoice_send(request):
                 modified_at=timezone.now(),  # Assuming modified_at is set to current time when created
                 created_by=created_by,
                 modified_by=created_by,  # Initially set modified_by to created_by
-<<<<<<< HEAD
                 logindetails=log_details,
                 company=company, 
-=======
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
             )
 
             # Use transaction.atomic() to ensure atomicity of the operations
@@ -28526,38 +28436,22 @@ def retaineroverview(request, pk=None):
                 return redirect('/')
             
             log_details = LoginDetails.objects.get(id=login_id)
-<<<<<<< HEAD
             invoices=None
             if log_details.user_type == 'Staff':
                 dash_details = StaffDetails.objects.get(login_details=log_details)
                 item = Items.objects.filter(company=dash_details.company)
                 invoices = RetainerInvoice.objects.filter(logindetails=log_details).order_by('-id')
-=======
-            
-            if log_details.user_type == 'Staff':
-                dash_details = StaffDetails.objects.get(login_details=log_details)
-                item = Items.objects.filter(company=dash_details.company)
-       
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
                 allmodules = ZohoModules.objects.get(company=dash_details.company,status='New')
                 units = Unit.objects.filter(company=dash_details.company)
                 accounts = Chart_of_Accounts.objects.filter(company=dash_details.company)
             elif log_details.user_type == 'Company':
                 dash_details = CompanyDetails.objects.get(login_details=log_details)
-<<<<<<< HEAD
                 item = Items.objects.filter(company=dash_details)
        
                 allmodules = ZohoModules.objects.get(company=dash_details,status='New')
                 units = Unit.objects.filter(company=dash_details)
                 accounts = Chart_of_Accounts.objects.filter(company=dash_details)
                 invoices = RetainerInvoice.objects.filter(company=dash_details).order_by('-id')
-=======
-                item = Items.objects.filter(company=dash_details.company)
-       
-                allmodules = ZohoModules.objects.get(company=dash_details.company,status='New')
-                units = Unit.objects.filter(company=dash_details.company)
-                accounts = Chart_of_Accounts.objects.filter(company=dash_details.company)
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 
                 
             invoice = RetainerInvoice.objects.get(pk=pk)
@@ -28577,11 +28471,7 @@ def retaineroverview(request, pk=None):
             # Print the retainer object here
             print(invoice)
             history_entries = RetainerInvoice.objects.filter(id=pk).order_by('modified_at') 
-<<<<<<< HEAD
             # invoices = RetainerInvoice.objects.select_related('customer_name').all()
-=======
-            invoices = RetainerInvoice.objects.select_related('customer_name').all()
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
             # Fetch modified by and created by login details objects
             # Fetch modified by and created by login details objects
             modified_by_details = None
@@ -32472,31 +32362,10 @@ def bill_overview(request,pk):
             'company':company,
         }
         return render(request, 'zohomodules/bill/bill_overview.html',context)
-<<<<<<< HEAD
         
 #End
 
 def Salesbycustomer(request):
-=======
-
-
-
-
-
-
-
-#End
-
-
-
-
-
-
-
-
-
-def view_reports(request):
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
     if 'login_id' in request.session:
         log_id = request.session['login_id']
         log_details= LoginDetails.objects.get(id=log_id)
@@ -32507,7 +32376,6 @@ def view_reports(request):
             cmp = StaffDetails.objects.get(login_details = log_details).company
             dash_details = StaffDetails.objects.get(login_details=log_details)
 
-<<<<<<< HEAD
         # rec = RecurringInvoice.objects.filter(company = cmp)
         allmodules= ZohoModules.objects.get(company = cmp)
         reportData = []
@@ -33062,44 +32930,126 @@ def shareSalesReportsToEmail(request):
 
 
 
-            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def view_invoice_report(request):
     if 'login_id' in request.session:
         if request.session.has_key('login_id'):
-            log_id = request.session['login_id']   
+            log_id = request.session['login_id']
         else:
-           return redirect('/')
-        log_details= LoginDetails.objects.get(id=log_id)
-        if log_details.user_type=='Staff':
-            dash_details = StaffDetails.objects.get(login_details=log_details)
-            comp_details=CompanyDetails.objects.get(id=dash_details.company.id)
-        else:    
+            return redirect('/')
+            
+        log_details = LoginDetails.objects.get(id=log_id)
+        print("log_details:", log_details)
+        
+        if log_details.user_type == "Company":
             dash_details = CompanyDetails.objects.get(login_details=log_details)
-            comp_details=CompanyDetails.objects.get(login_details=log_details)
+            print("dash_details:", dash_details)
+            
+            allmodules = ZohoModules.objects.get(company=dash_details, status='New')
+            print("allmodules:", allmodules)
+            
+            currentDate = datetime.today()
+            print("currentDate:", currentDate)
 
-        allmodules= ZohoModules.objects.get(company=comp_details,status='New')
-        data=Customer.objects.filter(company=comp_details)
-    else:
-        return redirect('/')
-    
-    invo= invoice.objects.filter(company=comp_details)
-    total_sales_amount = invoice.aggregate(grand_total=Sum('grand_total'))['grand_total']
-    return render(request, 'zohomodules/Reports/invoice_report.html', {
-                'invo': invo,
+            reportData1 = []
+            print("reportData1:", reportData1)
+            
+            total_amount = 0
+            print("total_amount:", total_amount)
+            
+            total_balance = 0
+            print("total_balance:", total_balance)
+
+            invo = invoice.objects.filter(company=dash_details)
+            print("Invoice:", invo)
+
+            cust = Customer.objects.filter(company=dash_details)
+            totcustomers=cust.count()
+
+            if invo:
+                for s in invo:
+                    customer_name = s.customer.first_name
+
+                    invoice_date = s.date
+                    print("invoice_date:", invoice_date)
+
+                    due_date = s.expiration_date
+                    print("due_date:", due_date)
+
+                    invoice_number = s.invoice_number
+                    print("invoice_number:", invoice_number)
+
+                    total_amount += s.grand_total
+                    print("total_amount:", total_amount)
+
+                    advanced_paid = s.advanced_paid
+                    print("advanced_paid:", advanced_paid)
+
+                    balance = s.balance
+                    print("balance:", balance)
+
+                    status = s.status
+                    print("status:", status)
+
+                    if s.status == 'Draft':
+                        status = 'Draft'
+                        print("status:", status)
+                    elif s.advanced_paid == 0 and due_date > currentDate.date():
+                        status = 'Not paid'
+                        print("status:", status)
+                    elif s.advanced_paid == s.grand_total:
+                        status = 'fully paid'
+                        print("status:", status)
+                    elif s.advanced_paid > 0 and s.advanced_paid < s.grand_total and due_date > currentDate.date():
+                        status = 'partially paid'
+                        print("status:", status)
+                    elif due_date < currentDate.date() and s.advanced_paid <= s.grand_total:
+                        status = 'overdue'
+                        print("status:", status)
+                    else:
+                        status = s.status
+                        print("status:", status)
+
+                    details = {
+                        'invoice_date': invoice_date,
+                        'customer_name': customer_name,
+                        'due_date': due_date,
+                        'invoice_number': invoice_number,
+                        'total_amount': total_amount,
+                        'status': status,
+                        'balance': balance,
+                        'totcustomers':totcustomers,
+                    }
+                    print("details:", details)
+                    reportData1.append(details)
+                    print("reportData1:", reportData1)
+                    
+
+            context = {
+                'log_id': log_id,
+                'log_details': log_details,
                 'details': dash_details,
                 'allmodules': allmodules,
-                'data': data,
-                'log_details': log_details,
-                'total_sales_amount': total_sales_amount
-            })
-    
-=======
-        rec = RecurringInvoice.objects.filter(company = cmp)
-        allmodules= ZohoModules.objects.get(company = cmp)
-        context = {
-            'invoices': rec, 'allmodules':allmodules, 'details':dash_details
-        }
-        return render(request, 'zohomodules/report/report.html', context)
-    else:
-        return redirect('/')
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
+                'rec': invo,
+                'reportData': reportData1,
+                'totalbalance': total_balance,
+                'startDate': None,
+                'endDate': None
+            }
+
+            return render(request, 'zohomodules/Reports/invoice_report.html', context)

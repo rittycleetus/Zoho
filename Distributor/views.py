@@ -3,12 +3,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.utils.crypto import get_random_string
 from Register_Login.models import *
-<<<<<<< HEAD
 
-=======
-import pandas as pd
-from bs4 import BeautifulSoup
->>>>>>> 03279ecabf40645e1d6fe34a71f5d0465cfbd816
 # Create your views here.
 
 def distributor_dashboard(request):
