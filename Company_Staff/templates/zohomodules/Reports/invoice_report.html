@@ -323,7 +323,7 @@
                                                     <td class="text-center">{{ invoice_detail.invoice_number }}</td>
                                                     <td class="text-center">{{ invoice_detail.order_number }}</td>
                                                     <td class="text-center">{{ invoice_detail.customer_name }}</td>
-                                                    <td class="text-center">{{ invoice_detail.total_amount }}</td>
+                                                    <td class="text-center">{{ invoice_detail.total }}</td>
                                                     <td class="text-center">{{ invoice_detail.balance }}</td>
                                                 </tr>
                                                 {% endfor %}
@@ -337,18 +337,19 @@
                                         <div class="row p-4">
                                             <div class="col-12">
                                                 <div class="row mb-2">
-                                                    <div class="col-4">Total customer : <p style="font-size: 19px;">{{ totcustomers|default:0 }}</p></div>
+                                                    <div class="col-4" style="font-size: 15px;">Total customer: <span>{{ totcustomer|default:0 }}</span></div>
                                                 </div>
+                                              
                                                 <div class="row justify-content-end">
                                                     <div class="col-md-6">
                                                         <div class="row">
                                                             <div class="col-6">
                                                                 <h5 style="color: black; font-weight: bold;">Total Amount:</h5>
-                                                                <h4 class="text-dark" style="font-weight: 400;">Rs.<span id="totalCreditnote">{{ total_amount|default:0|floatformat:2 }}</span></h4>
+                                                                <h4 class="text-dark" style="font-weight: 400;">Rs.<span id="totalCreditnote">{{ totalinvamount|default:0|floatformat:2 }}</span></h4>
                                                             </div>
                                                             <div class="col-6">
                                                                 <h5 style="color: black; font-weight: bold;">Total Balance:</h5>
-                                                                <h4 class="text-dark" style="font-weight: 400;" id="totvalue">Rs.<span id="superTotal">{{ total_balance|default:0|floatformat:2 }}</span></h4>
+                                                                <h4 class="text-dark" style="font-weight: 400;" id="totvalue">Rs.<span id="superTotal">{{ totalbalance|default:0|floatformat:2 }}</span></h4>
                                                             </div>
                                                         </div>
                                                     </div>

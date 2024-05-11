@@ -32979,10 +32979,12 @@ def view_invoice_report(request):
             print("Invoice:", invo)
 
             cust = Customer.objects.filter(company=dash_details)
-            totcustomers=cust.count()
+            totcustomer=cust.count()
+            print("HAI",totcustomer)
 
-            if invo:
-                for s in invo:
+            
+
+            for s in invo:
                     customer_name = s.customer.first_name
 
                     invoice_date = s.date
@@ -32991,49 +32993,60 @@ def view_invoice_report(request):
                     due_date = s.expiration_date
                     print("due_date:", due_date)
 
-                    invoice_number = s.invoice_number
-                    print("invoice_number:", invoice_number)
-
                     total_amount += s.grand_total
                     print("total_amount:", total_amount)
 
-                    advanced_paid = s.advanced_paid
-                    print("advanced_paid:", advanced_paid)
-
-                    balance = s.balance
-                    print("balance:", balance)
+                    invoice_number = s.invoice_number
+                    print("invoice_number:", invoice_number)
 
                     status = s.status
                     print("status:", status)
+
+                    paid=s.advanced_paid
+                    print("ADVANCE",paid)
 
                     if s.status == 'Draft':
                         status = 'Draft'
                         print("status:", status)
                     elif s.advanced_paid == 0 and due_date > currentDate.date():
-                        status = 'Not paid'
+                        status = 'Not Paid'
                         print("status:", status)
                     elif s.advanced_paid == s.grand_total:
-                        status = 'fully paid'
+                        status = 'Fully Paid'
                         print("status:", status)
                     elif s.advanced_paid > 0 and s.advanced_paid < s.grand_total and due_date > currentDate.date():
-                        status = 'partially paid'
+                        status = 'Partially Paid'
                         print("status:", status)
                     elif due_date < currentDate.date() and s.advanced_paid <= s.grand_total:
-                        status = 'overdue'
+                        status = 'Overdue'
                         print("status:", status)
-                    else:
-                        status = s.status
-                        print("status:", status)
+
+                    balance = s.balance
+                    print("balance:", balance)
+
+                    total=s.grand_total
+                    print("GRAND:", total)
+
+
+                    totalinvamount = invo.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
+
+                    print("WHOLE TOTAL", totalinvamount)
+                    
+                    totalbalance = invo.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
+
+                    print("totalbalance:",totalbalance)
 
                     details = {
                         'invoice_date': invoice_date,
                         'customer_name': customer_name,
                         'due_date': due_date,
                         'invoice_number': invoice_number,
-                        'total_amount': total_amount,
+                        'total':total,
                         'status': status,
                         'balance': balance,
-                        'totcustomers':totcustomers,
+                        'totcustomer': totcustomer,
+                        'totalinvamount': totalinvamount,
+                        'totalbalance': totalbalance,
                     }
                     print("details:", details)
                     reportData1.append(details)
@@ -33047,9 +33060,508 @@ def view_invoice_report(request):
                 'allmodules': allmodules,
                 'rec': invo,
                 'reportData': reportData1,
-                'totalbalance': total_balance,
                 'startDate': None,
-                'endDate': None
+                'endDate': None,
+                
+                'totcustomer': totcustomer, 
+                'totalinvamount': totalinvamount,
+                'totalbalance': totalbalance,
+                'total':total,
             }
 
             return render(request, 'zohomodules/Reports/invoice_report.html', context)
+
+
+
+        if log_details.user_type=="Staff":
+            company_details = StaffDetails.objects.get(login_details=log_details)
+            print("c")
+            print(company_details)
+            comp=CompanyDetails.objects.get(id=company_details.company.id)
+            print("d")
+            print(comp)
+            allmodules = ZohoModules.objects.get(company=company_details.company, status='New')
+            print("e")
+            print(allmodules)
+
+            currentDate = datetime.today()
+            print("currentDate:", currentDate)
+
+            reportData1 = []
+            print("reportData1:", reportData1)
+            
+            total_amount = 0
+            print("total_amount:", total_amount)
+            
+            total_balance = 0
+            print("total_balance:", total_balance)
+
+            invo = invoice.objects.filter(company=dash_details)
+            print("Invoice:", invo)
+
+            cust = Customer.objects.filter(company=dash_details)
+            totcustomer=cust.count()
+            print("HAI",totcustomer)
+
+            
+
+            for s in invo:
+                    customer_name = s.customer.first_name
+
+                    invoice_date = s.date
+                    print("invoice_date:", invoice_date)
+
+                    due_date = s.expiration_date
+                    print("due_date:", due_date)
+
+                    total_amount += s.grand_total
+                    print("total_amount:", total_amount)
+
+                    invoice_number = s.invoice_number
+                    print("invoice_number:", invoice_number)
+
+                    status = s.status
+                    print("status:", status)
+
+                    paid=s.advanced_paid
+                    print("ADVANCE",paid)
+
+                    if s.status == 'Draft':
+                        status = 'Draft'
+                        print("status:", status)
+                    elif s.advanced_paid == 0 and due_date > currentDate.date():
+                        status = 'Not Paid'
+                        print("status:", status)
+                    elif s.advanced_paid == s.grand_total:
+                        status = 'Fully Paid'
+                        print("status:", status)
+                    elif s.advanced_paid > 0 and s.advanced_paid < s.grand_total and due_date > currentDate.date():
+                        status = 'Partially Paid'
+                        print("status:", status)
+                    elif due_date < currentDate.date() and s.advanced_paid <= s.grand_total:
+                        status = 'Overdue'
+                        print("status:", status)
+
+                    balance = s.balance
+                    print("balance:", balance)
+
+                    total=s.grand_total
+                    print("GRAND:", total)
+
+
+                    totalinvamount = invo.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
+
+                    print("WHOLE TOTAL", totalinvamount)
+                    
+                    totalbalance = invo.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
+
+                    print("totalbalance:",totalbalance)
+
+                    details = {
+                        'invoice_date': invoice_date,
+                        'customer_name': customer_name,
+                        'due_date': due_date,
+                        'invoice_number': invoice_number,
+                        'total':total,
+                        'status': status,
+                        'balance': balance,
+                        'totcustomer': totcustomer,
+                        'totalinvamount': totalinvamount,
+                        'totalbalance': totalbalance,
+                    }
+                    print("details:", details)
+                    reportData1.append(details)
+                    print("reportData1:", reportData1)
+                    
+
+            context = {
+                'log_id': log_id,
+                'log_details': log_details,
+                'details': dash_details,
+                'allmodules': allmodules,
+                'rec': invo,
+                'reportData': reportData1,
+                'startDate': None,
+                'endDate': None,
+                
+                'totcustomer': totcustomer, 
+                'totalinvamount': totalinvamount,
+                'totalbalance': totalbalance,
+                'total':total,
+            }
+
+            return render(request, 'zohomodules/Reports/invoice_report.html', context)
+
+
+
+
+
+
+
+
+
+
+
+# def InvoiceReportCustomized(request):
+#     if 'login_id' in request.session:
+#         if request.session.has_key('login_id'):
+#             log_id = request.session['login_id']
+#         else:
+#             return redirect('/')
+#     log_details= LoginDetails.objects.get(id=log_id)
+#     print("log_details:",log_details)
+    
+#     if log_details.user_type=="Company":
+#         dash_details = CompanyDetails.objects.get(login_details=log_details)
+#         print("dash_details:",dash_details)
+        
+        
+#         allmodules= ZohoModules.objects.get(company=dash_details,status='New')
+#         print("allmodules:",allmodules)
+        
+#         startDate = request.GET.get('start_date', None)
+#         print("startdate:",startDate)
+        
+#         endDate = request.GET.get('end_date', None)
+#         print("endDate:",endDate)
+        
+#         status = request.GET.get('status')
+#         print("status:",status)
+        
+#         report = request.GET.get('billdate',None)
+#         print("report:",report)
+
+
+
+#         currentDate = datetime.today()
+#         print("currentDate:",currentDate)
+#         reportData = []
+#         print("reportData:",reportData)
+#         totalSales = 0
+#         print("totalSales:",totalSales)
+#         totvendr=0
+#         print("totvendr:",totvendr)
+#         totalbalance=0
+#         print("totalbalance:",totalbalance)
+        
+#         rec = RecurringInvoice.objects.filter(company=dash_details)
+#         print("rec:",rec)
+#         cust = Customer.objects.filter(company=dash_details)
+#         print("cust:",cust)
+        
+#         if startDate and endDate:
+#             rec = rec.filter(start_date__range=[startDate, endDate])
+#             print("rec1:",rec)
+            
+#         if report:
+#             if report=='billdate':
+#                 rec = rec.filter(start_date__range=[startDate, endDate])
+#                 print("rec2:",rec)
+#             if report=='shipdate':
+#                 rec = rec.filter(end_date__range=[startDate, endDate])
+#                 print("rec3:",rec)
+              
+
+#         if status:
+#             if status == 'Draft':
+#                 rec = rec.filter(status = 'Draft')
+#                 print("rec4:",rec)
+#             elif status == 'fully paid':
+#                 rec = rec.filter(advance_paid=F('grandtotal'),status='Save')
+#                 print("rec5:",recurr_overview)
+                
+
+#             elif status == 'Not paid':
+#                 rec = rec.filter(Q(advance_paid=0)  & Q(end_date__gt=currentDate),status='Save')
+#                 print("rec6:",rec)
+
+#             elif status == 'partially paid':
+#                 rec = rec.filter(Q(advance_paid__gt=0)  & Q(advance_paid__lt=F('grandtotal')) & Q(end_date__gt=currentDate),status='Save')
+#                 print(rec)
+#                 print("7")
+#             elif status == 'overdue':
+#                 rec = rec.filter((Q(end_date__lte=currentDate) & Q(advance_paid__lt=F('grandtotal')) ), status='Save')
+#                 print("8")
+#                 print(rec)
+                
+#         for s in rec:
+#             partyName = s.customer.customer_display_name
+#             print("partyName:",partyName)
+            
+#             date = s.start_date
+#             print("date:",date)
+            
+#             ship_date = s.end_date
+#             print("ship_date:",ship_date)
+            
+#             end_date = datetime.combine(s.end_date, datetime.min.time())
+#             print("end_date:",end_date)
+            
+
+#             rbill =s.rec_invoice_no
+#             print("rbill:",rbill)
+            
+#             ordrno =s.salesOrder_no
+#             print("ordrno:",ordrno)
+            
+#             total = s.grandtotal
+#             print("total:",total)
+            
+#             paid=s.advance_paid
+#             print("paid:",paid)
+            
+#             balance=s.balance
+#             print("balance:",balance)
+            
+#             st=s.status
+#             print("st1:",st)
+            
+#             totalSales += float(s.grandtotal)
+#             print("totalSales:",totalSales)
+            
+#             totalbalance += float(s.balance)
+#             print("totalbalance:",totalbalance)
+            
+#             if s.status == 'Draft':
+#                 st = 'Draft'
+#                 print("st2:",st)
+#             elif s.advance_paid == 0 and end_date>currentDate:
+#                 st = 'Not paid'
+#                 print("st3:",st)
+                
+#             elif s.advance_paid == s.grandtotal:
+#                 st = 'fully paid'
+#                 print("st4:",staff_password_change)
+            
+#             elif s.advance_paid > 0 and s.advance_paid<s.grandtotal and end_date>currentDate:
+#                 st = 'partially paid'
+#                 print("st5:",st)
+#             elif end_date<currentDate and s.advance_paid<=s.grandtotal:
+#                 st = 'overdue'
+#                 print("st5:",st)
+            
+#             else:
+#                 st = s.status
+#                 print("st6:",st)
+
+#             details = {
+#                 'date': date,
+#                 'name': partyName,
+#                 'ship_date':ship_date,
+#                 'rbill':rbill,
+#                 'ordrno': ordrno,
+#                 'total':total,
+#                 'status':st,
+#                 'balance':balance,
+                
+                
+                
+#             }
+#             print("details:",details)
+#             reportData.append(details)
+#             print("reportData1:",reportData)
+#             totvendr=len(cust)
+#             print("totvendr1:",totvendr)
+
+
+
+        
+        
+#         context={
+#             'log_id':log_id,
+#             'log_details':log_details,
+#             'details':dash_details,
+#             'allmodules': allmodules,
+#             'rec': rec,
+#             'reportData': reportData,
+#             'totalbalance':totalbalance,
+#             'totalSales': totalSales, 
+#             'totcust': totvendr,
+#             'startDate': startDate,
+#             'endDate': endDate, 
+#             'status': status,
+#             'billdate':report
+
+#             #'journal_entries':journal_entries,
+           
+#         }
+        
+#         return render(request,'zohomodules/Reports/Reccuring_Bill_Report.html',context)
+    
+#     if log_details.user_type=="Staff":
+#         company_details = StaffDetails.objects.get(login_details=log_details)
+#         print("c")
+#         print(company_details)
+#         comp=CompanyDetails.objects.get(id=company_details.company.id)
+#         print("d")
+#         print(comp)
+#         allmodules = ZohoModules.objects.get(company=company_details.company, status='New')
+#         print("e")
+#         print(allmodules)
+#         startDate = request.GET.get('start_date', None)
+#         print("startdate:",startDate)
+        
+#         endDate = request.GET.get('end_date', None)
+#         print("endDate:",endDate)
+        
+#         status = request.GET.get('status')
+#         print("status:",status)
+        
+#         report = request.GET.get('billdate',None)
+#         print("report:",report)
+
+
+
+#         currentDate = datetime.today()
+#         print("currentDate:",currentDate)
+#         reportData = []
+#         print("reportData:",reportData)
+#         totalSales = 0
+#         print("totalSales:",totalSales)
+#         totvendr=0
+#         print("totvendr:",totvendr)
+#         totalbalance=0
+#         print("totalbalance:",totalbalance)
+        
+#         rec = RecurringInvoice.objects.filter(company=company_details.company)
+#         print("rec:",rec)
+#         cust = Customer.objects.filter(company=company_details.company)
+#         print("cust:",cust)
+        
+#         if startDate and endDate:
+#             rec = rec.filter(start_date__range=[startDate, endDate])
+#             print("rec1:",rec)
+            
+#         if report:
+#             if report=='billdate':
+#                 rec = rec.filter(start_date__range=[startDate, endDate])
+#                 print("rec2:",rec)
+#             if report=='shipdate':
+#                 rec = rec.filter(end_date__range=[startDate, endDate])
+#                 print("rec3:",rec)
+              
+
+#         if status:
+#             if status == 'Draft':
+#                 rec = rec.filter(status = 'Draft')
+#                 print("rec4:",rec)
+#             elif status == 'fully paid':
+#                 rec = rec.filter(advance_paid=F('grandtotal'),status='Save')
+#                 print("rec5:",recurr_overview)
+                
+
+#             elif status == 'Not paid':
+#                 rec = rec.filter(Q(advance_paid=0)  & Q(end_date__gt=currentDate),status='Save')
+#                 print("rec6:",rec)
+
+#             elif status == 'partially paid':
+#                 rec = rec.filter(Q(advance_paid__gt=0)  & Q(advance_paid__lt=F('grandtotal')) & Q(end_date__gt=currentDate),status='Save')
+#                 print(rec)
+#                 print("7")
+#             elif status == 'overdue':
+#                 rec = rec.filter((Q(end_date__lte=currentDate) & Q(advance_paid__lt=F('grandtotal')) ), status='Save')
+#                 print("8")
+#                 print(rec)
+                
+#         for s in rec:
+#             partyName = s.customer.customer_display_name
+#             print("partyName:",partyName)
+            
+#             date = s.start_date
+#             print("date:",date)
+            
+#             ship_date = s.end_date
+#             print("ship_date:",ship_date)
+            
+#             end_date = datetime.combine(s.end_date, datetime.min.time())
+#             print("end_date:",end_date)
+            
+
+#             rbill =s.rec_invoice_no
+#             print("rbill:",rbill)
+            
+#             ordrno =s.salesOrder_no
+#             print("ordrno:",ordrno)
+            
+#             total = s.grandtotal
+#             print("total:",total)
+            
+#             paid=s.advance_paid
+#             print("paid:",paid)
+            
+#             balance=s.balance
+#             print("balance:",balance)
+            
+#             st=s.status
+#             print("st1:",st)
+            
+#             totalSales += float(s.grandtotal)
+#             print("totalSales:",totalSales)
+            
+#             totalbalance += float(s.balance)
+#             print("totalbalance:",totalbalance)
+            
+#             if s.status == 'Draft':
+#                 st = 'Draft'
+#                 print("st2:",st)
+#             elif s.advance_paid == 0 and end_date>currentDate:
+#                 st = 'Not paid'
+#                 print("st3:",st)
+                
+#             elif s.advance_paid == s.grandtotal:
+#                 st = 'fully paid'
+#                 print("st4:",staff_password_change)
+            
+#             elif s.advance_paid > 0 and s.advance_paid<s.grandtotal and end_date>currentDate:
+#                 st = 'partially paid'
+#                 print("st5:",st)
+#             elif end_date<currentDate and s.advance_paid<=s.grandtotal:
+#                 st = 'overdue'
+#                 print("st5:",st)
+            
+#             else:
+#                 st = s.status
+#                 print("st6:",st)
+
+#             details = {
+#                 'date': date,
+#                 'name': partyName,
+#                 'ship_date':ship_date,
+#                 'rbill':rbill,
+#                 'ordrno': ordrno,
+#                 'total':total,
+#                 'status':st,
+#                 'balance':balance,
+                
+                
+                
+#             }
+#             print("details:",details)
+#             reportData.append(details)
+#             print("reportData1:",reportData)
+#             totvendr=len(cust)
+#             print("totvendr1:",totvendr)
+
+
+
+        
+        
+#         context={
+#             'log_id':log_id,
+#             'log_details':log_details,
+#             'details':company_details,
+#             'allmodules': allmodules,
+#             'rec': rec,
+#             'reportData': reportData,
+#             'totalbalance':totalbalance,
+#             'totalSales': totalSales, 
+#             'totcust': totvendr,
+#             'startDate': startDate,
+#             'endDate': endDate, 
+#             'status': status,
+#             'billdate':report
+
+           
+#         }
+        
+#         return render(request,'zohomodules/Reports/Reccuring_Bill_Report.html',context)
