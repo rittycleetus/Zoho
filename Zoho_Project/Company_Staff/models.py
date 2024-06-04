@@ -933,7 +933,11 @@ class invoice(models.Model):
     grand_total=models.FloatField(default=0.0, null=True, blank=True)
     advanced_paid=models.FloatField(default=0.0, null=True, blank=True)
     balance=models.FloatField(default=0.0, null=True, blank=True)
-    status=models.CharField(max_length=220,null=True,blank=True)
+    STATUS_CHOICES = [
+        ('Draft', 'Draft'),
+        ('Saved', 'Saved'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
 
     def getNumFieldName(self):
         return 'invoice_number'  

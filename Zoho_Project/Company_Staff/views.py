@@ -17602,6 +17602,7 @@ def createInvoice(request):
                 payment_terms = Company_Payment_Term.objects.get(id = request.POST['payment_term']),
                 date = request.POST['start_date'],
                 expiration_date = datetime.strptime(request.POST['end_date'], '%d-%m-%Y').date(),
+                
                 # Order_number = request.POST['order_number'],
                 price_list_applied = True if 'priceList' in request.POST else False,
                 price_list = None if request.POST['price_list_id'] == "" else PriceList.objects.get(id = request.POST['price_list_id']),
@@ -55114,467 +55115,229 @@ def all_parties_ReportToEmail(request):
             return redirect('all_parties')
             
 #End
-
-
 def view_invoice_report(request):
-    if 'login_id' in request.session:
-        if request.session.has_key('login_id'):
-            log_id = request.session['login_id']
-        else:
-            return redirect('/')
+    if 'login_id' not in request.session:
+        return redirect('/')
 
+    log_id = request.session['login_id']
+    
+    try:
         log_details = LoginDetails.objects.get(id=log_id)
-        print("log_details:", log_details)
-
-        if log_details.user_type == "Company":
-            dash_details = CompanyDetails.objects.get(login_details=log_details)
-            print("dash_details:", dash_details)
-
-            allmodules = ZohoModules.objects.get(company=dash_details, status='New')
-            print("allmodules:", allmodules)
-
-            currentDate = datetime.today()
-            print("currentDate:", currentDate)
-
-            reportData1 = []
-            print("reportData1:", reportData1)
-
-            total_amount = 0
-            print("total_amount:", total_amount)
-
-            total_balance = 0
-            print("total_balance:", total_balance)
-
-            invo = invoice.objects.filter(company=dash_details)
-            print("Invoice:", invo)
-
-            cust = Customer.objects.filter(company=dash_details)
-            totcustomer = cust.count()
-            print("HAI", totcustomer)
-
-            totalbalance = 0
-            totalinvamount = 0
-            total = 0
-            if invo: 
-                for s in invo:
-                    customer_name = s.customer.first_name
-
-                    invoice_date = s.date
-                    print("invoice_date:", invoice_date)
-
-                    due_date = s.expiration_date
-                    print("due_date:", due_date)
-
-                    total_amount += s.grand_total
-                    print("total_amount:", total_amount)
-
-                    invoice_number = s.invoice_number
-                    print("invoice_number:", invoice_number)
-
-                 
-                    if s.status == 'Draft':
-                        st = 'Draft'
-                    elif s.advanced_paid == 0 and due_date > currentDate.date():
-                        st = 'Not paid'
-                    elif s.advanced_paid == s.grand_total:
-                        st = 'fully paid'
-                    elif s.advanced_paid > 0 and s.advanced_paid < s.grand_total and due_date > currentDate.date():
-                        st = 'partially paid'  
-                    elif due_date < currentDate.date() and s.advanced_paid < s.grand_total:
-                        st = 'overdue' 
-                    else:
-                        st = s.status  
-
-                    
-                    print("Invoice status:", st)
-
-
-                    balance = s.balance
-                    print("balance:", balance)
-
-                    total = s.grand_total
-                    print("GRAND:", total)
-
-                    sales_order_number = SaleOrder.objects.filter(company=dash_details, customer=s.customer).values_list(
-                        'sales_order_number', flat=True).first()
-                    totalinvamount = invo.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
-
-                    print("WHOLE TOTAL", totalinvamount)
-
-                    totalbalance = invo.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
-
-                    print("totalbalance:", totalbalance)
-
-                    details = {
-                        'invoice_date': invoice_date,
-                        'customer_name': customer_name,
-                        'due_date': due_date,
-                        'invoice_number': invoice_number,
-                        'sales_order_number': sales_order_number,
-                        'total': total,
-                        'status': st,
-                        'balance': balance,
-                        'totcustomer': totcustomer,
-                        'totalinvamount': totalinvamount,
-                        'totalbalance': totalbalance,
-                        'paid': s.advanced_paid,
-                    }
-                    print("details:", details)
-                    reportData1.append(details)
-                    print("reportData1:", reportData1)
-
-                context = {
-                    'log_id': log_id,
-                    'log_details': log_details,
-                    'details': dash_details,
-                    'allmodules': allmodules,
-                    'rec': invo,
-                    'reportData': reportData1,
-                    'startDate': None,
-                    'endDate': None,
-
-                    'totcustomer': totcustomer,
-                    'totalinvamount': totalinvamount,
-                    'totalbalance': totalbalance,
-                    'total': total,
-                }
-
-                return render(request, 'zohomodules/Reports/invoice_report.html', context)
-
-    return redirect('/')
-
-        #### if log_details.user_type == "Staff":
-        #     company_details = StaffDetails.objects.get(login_details=log_details)
-        #     print("c")
-        #     print(company_details)
-        #     comp = CompanyDetails.objects.get(id=company_details.company.id)
-        #     print("d")
-        #     print(comp)
-        #     allmodules = ZohoModules.objects.get(company=company_details.company, status='New')
-        #     print("e")
-        #     print(allmodules)
-
-        #     currentDate = datetime.today()
-        #     print("currentDate:", currentDate)
-
-        #     reportData1 = []
-        #     print("reportData1:", reportData1)
-
-        #     total_amount = 0
-        #     print("total_amount:", total_amount)
-
-        #     total_balance = 0
-        #     print("total_balance:", total_balance)
-
-        #     invo = invoice.objects.filter(company=dash_details)
-        #     print("Invoice:", invo)
-
-        #     cust = Customer.objects.filter(company=dash_details)
-        #     totcustomer = cust.count()
-        #     print("HAI", totcustomer)
-
-        #     for s in invo:
-        #         customer_name = s.customer.first_name
-
-        #         invoice_date = s.date
-        #         print("invoice_date:", invoice_date)
-
-        #         due_date = s.expiration_date
-        #         print("due_date:", due_date)
-
-        #         total_amount += s.grand_total
-        #         print("total_amount:", total_amount)
-
-        #         invoice_number = s.invoice_number
-        #         print("invoice_number:", invoice_number)
-
-        #         status = s.status
-        #         print("status:", status)
-
-        #         paid = s.advanced_paid
-        #         print("ADVANCE", paid)
-
-        #         if s.status == 'Draft':
-        #             status = 'Draft'
-        #             print("status:", status)
-        #         elif s.advanced_paid == 0 and due_date > currentDate.date():
-        #             status = 'Not Paid'
-        #             print("status:", status)
-        #         elif s.advanced_paid == s.grand_total:
-        #             status = 'Fully Paid'
-        #             print("status:", status)
-        #         elif s.advanced_paid > 0 and s.advanced_paid < s.grand_total and due_date > currentDate.date():
-        #             status = 'Partially Paid'
-        #             print("status:", status)
-        #         elif due_date < currentDate.date() and s.advanced_paid <= s.grand_total:
-        #             status = 'Overdue'
-        #             print("status:", status)
-
-        #         balance = s.balance
-        #         print("balance:", balance)
-
-        #         total = s.grand_total
-        #         print("GRAND:", total)
-
-        #         sales_order_number = SaleOrder.objects.filter(company=dash_details, customer=s.customer).values_list(
-        #             'sales_order_number', flat=True).first()
-
-        #         totalinvamount = invo.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
-
-        #         print("WHOLE TOTAL", totalinvamount)
-
-        #         totalbalance = invo.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
-
-        #         print("totalbalance:", totalbalance)
-
-        #         details = {
-        #             'invoice_date': invoice_date,
-        #             'customer_name': customer_name,
-        #             'due_date': due_date,
-        #             'invoice_number': invoice_number,
-        #             'sales_order_number': sales_order_number,
-        #             'total': total,
-        #             'status': status,
-        #             'balance': balance,
-        #             'totcustomer': totcustomer,
-        #             'totalinvamount': totalinvamount,
-        #             'totalbalance': totalbalance,
-        #         }
-        #         print("details:", details)
-        #         reportData1.append(details)
-        #         print("reportData1:", reportData1)
-
-        #     context = {
-        #         'log_id': log_id,
-        #         'log_details': log_details,
-        #         'details': dash_details,
-        #         'allmodules': allmodules,
-        #         'rec': invo,
-        #         'reportData': reportData1,
-        #         'startDate': None,
-        #         'endDate': None,
-
-        #         'totcustomer': totcustomer,
-        #         'totalinvamount': totalinvamount,
-        #         'totalbalance': totalbalance,
-        #         'total': total,
-        #         'paid': paid,
-        #     }
-
-        #     return render(request, 'zohomodules/Reports/invoice_report.html', context)
-
-
-
-def InvoiceReportCustomized(request):
-    if 'login_id' in request.session:
-        log_id = request.session.get('login_id')
-    else:
+    except LoginDetails.DoesNotExist:
         return redirect('/')
     
-    log_details = LoginDetails.objects.get(id=log_id)
-    
-    if log_details.user_type == "Company":
-        dash_details = CompanyDetails.objects.get(login_details=log_details)
-        all_modules = ZohoModules.objects.get(company=dash_details, status='New')
-
-        startDate = request.GET.get('start_date', None)
-        endDate = request.GET.get('end_date', None)
-        status = request.GET.get('status')
-        report = request.GET.get('billdate', None)
-
+    try:
+        if log_details.user_type == "Company":
+            dash_details = CompanyDetails.objects.get(login_details=log_details)
+            allmodules = ZohoModules.objects.get(company=dash_details, status='New')
+        elif log_details.user_type == "Staff":
+            company_details = StaffDetails.objects.get(login_details=log_details)
+            dash_details = CompanyDetails.objects.get(id=company_details.company.id)
+            allmodules = ZohoModules.objects.get(company=company_details.company, status='New')
+        else:
+            return redirect('/')
+        
         currentDate = datetime.today()
-        reportData = []
-        totalinvamount = 0
-        totalbalance = 0
+        
+        reportData1 = []
+        total_amount = 0
+        total_balance = 0
 
-        invoices = invoice.objects.filter(company=dash_details)
-
-        if startDate and endDate:
-            invoices = invoices.filter(date__range=[startDate, endDate])
-
-        if report:
-            if report == 'billdate':
-                invoices = invoices.filter(date__range=[startDate, endDate])
-            elif report == 'shipdate':
-                invoices = invoices.filter(expiration_date__range=[startDate, endDate])
-
-        if status:
-            if status == 'all':
-                status_filter = None
-            else:
-                status_filter = status
-
-            if status_filter:
-                if status_filter == 'Draft':
-                    invoices = invoices.filter(status='Draft')
-                elif status_filter == 'fully paid':
-                    invoices = invoices.filter(advanced_paid=F('grand_total'), status='Save')
-                elif status_filter == 'Not paid':
-                    invoices = invoices.filter(Q(advanced_paid=0) & Q(expiration_date__gt=currentDate), status='Save')
-                elif status_filter == 'partially paid':
-                    invoices = invoices.filter(Q(advanced_paid__gt=0) & Q(advanced_paid__lt=F('grand_total')) & Q(expiration_date__gt=currentDate), status='Save')
-                elif status_filter == 'overdue':
-                    invoices = invoices.filter(Q(expiration_date__lte=currentDate) & Q(advanced_paid__lt=F('grand_total')), status='Save')
-
+        invo = invoice.objects.filter(company=dash_details)
         cust = Customer.objects.filter(company=dash_details)
         totcustomer = cust.count()
-
-        for inv in invoices:
-            customer_name = inv.customer.first_name
-            invoice_date = inv.date
-            ship_date = inv.expiration_date
-            due_date = datetime.combine(inv.expiration_date, datetime.min.time())
-            totalinvamount += inv.grand_total
-            invoice_number = inv.invoice_number
-            balance = inv.balance
-            total = inv.grand_total
-            paid = inv.advanced_paid
-            st = inv.status
-
-            if inv.status == 'Draft':
+        
+        totalbalance = 0
+        totalinvamount = 0
+        
+        for s in invo:
+            customer_name = s.customer.first_name
+            invoice_date = s.date
+            due_date = s.expiration_date
+            total_amount += s.grand_total
+            invoice_number = s.invoice_number
+            balance = s.balance
+            paid = s.advanced_paid
+            status = s.status
+            total = s.grand_total
+            
+            sales_order_number = SaleOrder.objects.filter(company=dash_details, customer=s.customer).values_list('sales_order_number', flat=True).first()
+            totalinvamount = invo.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
+            totalbalance = invo.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
+            
+            if s.status == 'Draft':
                 st = 'Draft'
-            elif inv.advanced_paid == 0 and due_date > currentDate:
+            elif s.advanced_paid == 0 and due_date > currentDate.date():
                 st = 'Not paid'
-            elif inv.advanced_paid == inv.grand_total:
+            elif s.advanced_paid == s.grand_total:
                 st = 'fully paid'
-            elif inv.advanced_paid > 0 and inv.advanced_paid < inv.grand_total and due_date > currentDate:
+            elif s.advanced_paid > 0 and s.advanced_paid < s.grand_total and due_date > currentDate.date():
                 st = 'partially paid'
-            elif due_date < currentDate and inv.advanced_paid <= inv.grand_total:
+            elif due_date < currentDate.date() and s.advanced_paid < s.grand_total:
                 st = 'overdue'
+            else:
+                st = s.status
 
-            reportData.append({
+            details = {
                 'invoice_date': invoice_date,
                 'customer_name': customer_name,
-                'ship_date': ship_date, 
                 'due_date': due_date,
                 'invoice_number': invoice_number,
+                'sales_order_number': sales_order_number,
                 'total': total,
-                'status': st,
+                'status': st, 
                 'balance': balance,
                 'totcustomer': totcustomer,
+                'totalinvamount': totalinvamount,
+                'totalbalance': totalbalance,
                 'paid': paid,
-                'sales_order_number': inv.sales_order_number, 
-            })
-
-        totalinvamount = invoices.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
-        totalbalance = invoices.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
-
+            }
+            reportData1.append(details)
+        
         context = {
             'log_id': log_id,
             'log_details': log_details,
             'details': dash_details,
-            'allmodules': all_modules,
-            'reportData': reportData,
-            'startDate': startDate,
-            'endDate': endDate,
-            'report': report, 
-            'status': status,
+            'allmodules': allmodules,
+            'rec': invo,
+            'reportData': reportData1,
+            'startDate': None,
+            'endDate': None,
+            'totcustomer': totcustomer,
             'totalinvamount': totalinvamount,
             'totalbalance': totalbalance,
-            'totcustomer': totcustomer,
-            'status_filter': status_filter,
+            'total': total_amount,
+            'status': st,
         }
 
         return render(request, 'zohomodules/Reports/invoice_report.html', context)
-        
-    #     elif log_details.user_type == "Staff":
-    #         company_details = StaffDetails.objects.get(login_details=log_details)
-    #         comp = CompanyDetails.objects.get(id=company_details.company.id)
-    #         allmodules = ZohoModules.objects.get(company=company_details.company, status='New')
 
-    #         startDate = request.GET.get('from_date')
-    #         endDate = request.GET.get('to_date')
-    #         status = request.GET.get('status')
+    except (CompanyDetails.DoesNotExist, ZohoModules.DoesNotExist):
+        return redirect('/')
 
-    #         currentDate = datetime.today().date()
-    #         reportData = []
-    #         totalinvamount = 0
-    #         totalbalance = 0
-            
-    #         cust = Customer.objects.filter(company=company_details.company)
-    #         totcustomer = cust.count()
+    return redirect('/')
 
-    #         invoices = invoice.objects.filter(company=company_details.company)
 
-    #         if startDate and endDate:
-    #             invoices = invoices.filter(expiration_date__range=[startDate, endDate])
+def InvoiceReportCustomized(request):
+    if 'login_id' not in request.session:
+        return redirect('/')
 
-    #         if status:
-    #             if status == 'Draft':
-    #                 invoices = invoices.filter(status='Draft')
-    #             elif status == 'fully paid':
-    #                 invoices = invoices.filter(advanced_paid=F('grand_total'), status='Save')
-    #             elif status == 'Not paid':
-    #                 invoices = invoices.filter(Q(advanced_paid=0) & Q(expiration_date__gt=currentDate), status='Save')
-    #             elif status == 'partially paid':
-    #                 invoices = invoices.filter(Q(advanced_paid__gt=0) & Q(advanced_paid__lt=F('grand_total')) & Q(expiration_date__gt=currentDate), status='Save')
-    #             elif status == 'overdue':
-    #                 invoices = invoices.filter(Q(expiration_date__lte=currentDate) & Q(advanced_paid__lt=F('grand_total')), status='Save')
+    log_id = request.session.get('login_id')
+    log_details = LoginDetails.objects.get(id=log_id)
 
-    #         for inv in invoices:
-    #             customer_name = inv.customer.first_name
-    #             invoice_date = inv.date
-    #             due_date = inv.expiration_date
-    #             totalinvamount += inv.grand_total
-    #             invoice_number = inv.invoice_number
-    #             balance = inv.balance
-    #             total = inv.grand_total
-    #             paid = inv.advanced_paid
+    if log_details.user_type == "Company":
+        dash_details = CompanyDetails.objects.get(login_details=log_details)
+    elif log_details.user_type == "Staff":
+        company_details = StaffDetails.objects.get(login_details=log_details)
+        dash_details = CompanyDetails.objects.get(id=company_details.company.id)
+    else:
+        return redirect('/')
 
-    #             if inv.status == 'Draft':
-    #                 status = 'Draft'
-    #             elif inv.advanced_paid == 0 and due_date > currentDate:
-    #                 status = 'Not Paid'
-    #             elif inv.advanced_paid == inv.grand_total:
-    #                 status = 'fully Paid'
-    #             elif inv.advanced_paid > 0 and inv.advanced_paid < inv.grand_total and due_date > currentDate:
-    #                 status = 'partially Paid'
-    #             elif due_date < currentDate and inv.advanced_paid <= inv.grand_total:
-    #                 status = 'overdue'
+    all_modules = ZohoModules.objects.get(company=dash_details, status='New')
 
-    #             reportData.append({
-    #                 'invoice_date': invoice_date,
-    #                 'customer_name': customer_name,
-    #                 'due_date': due_date,
-    #                 'invoice_number': invoice_number,
-    #                 'total': total,
-    #                 'status': status,
-    #                 'balance': balance,
-    #                 'totcustomer': totcustomer,
-    #                 'paid': paid,
-    #                 'sales_order_number': inv.sales_order_number, 
-    #             })
+    startDate = request.GET.get('start_date', None)
+    endDate = request.GET.get('end_date', None)
+    status = request.GET.get('status')
+    report = request.GET.get('billdate', None)
 
-    #         totalinvamount = invoices.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
-    #         totalbalance = invoices.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
-            
-    #         context = {
-    #             'log_id': log_id,
-    #             'log_details': log_details,
-    #             'details': dash_details,
-    #             'allmodules': allmodules,
-    #             'reportData': reportData,
-    #             'startDate': startDate,
-    #             'endDate': endDate,
-    #             'status_filter': status,
-    #             'totalinvamount': totalinvamount,
-    #             'totalbalance': totalbalance,
-    #             'totcustomer': totcustomer,
-    #         }
+    currentDate = datetime.today().date()
+    reportData = []
+    totalinvamount = 0
+    totalbalance = 0
 
-    #         return render(request, 'zohomodules/Reports/invoice_report.html', context)
+    invoices = invoice.objects.filter(company=dash_details)
 
-    # except (LoginDetails.DoesNotExist, CompanyDetails.DoesNotExist, ZohoModules.DoesNotExist):
-    #     return redirect('/')
+    if startDate and endDate:
+        invoices = invoices.filter(date__range=[startDate, endDate])
+    elif report == 'shipdate' and startDate and endDate:
+        invoices = invoices.filter(expiration_date__range=[startDate, endDate])
+
+    if status:
+        status_filter = None
+        if status != 'all':
+            status_filter = status
+
+        if status_filter:
+            status_mapping = {
+                'Draft': Q(status='Draft'),
+                'fully paid': Q(advanced_paid=F('grand_total'), status='Saved'),
+                'Not paid': Q(advanced_paid=0, expiration_date__gt=currentDate, status='Saved'),
+                'partially paid': Q(advanced_paid__gt=0, advanced_paid__lt=F('grand_total'), expiration_date__gt=currentDate, status='Saved'),
+                'overdue': Q(expiration_date__lte=currentDate, advanced_paid__lt=F('grand_total'), status='Saved')
+            }
+            invoices = invoices.filter(status_mapping.get(status_filter))
+
+    cust = Customer.objects.filter(company=dash_details)
+    totcustomer = cust.count()
+
+    for inv in invoices:
+        customer_name = inv.customer.first_name
+        invoice_date = inv.date
+        ship_date = inv.expiration_date
+        due_date = inv.expiration_date
+        totalinvamount += inv.grand_total
+        invoice_number = inv.invoice_number
+        balance = inv.balance
+        total = inv.grand_total
+        paid = inv.advanced_paid
+        st = inv.status
+
+        if inv.status == 'Draft':
+            st = 'Draft'
+        elif inv.advanced_paid == 0 and due_date > currentDate:
+            st = 'Not paid'
+        elif inv.advanced_paid == inv.grand_total:
+            st = 'fully paid'
+        elif inv.advanced_paid > 0 and inv.advanced_paid < inv.grand_total and due_date > currentDate:
+            st = 'partially paid'
+        elif due_date < currentDate and inv.advanced_paid <= inv.grand_total:
+            st = 'overdue'
+
+        sales_order_number = SaleOrder.objects.filter(company=dash_details, customer=inv.customer).values_list('sales_order_number', flat=True).first()
+
+        reportData.append({
+            'invoice_date': invoice_date,
+            'customer_name': customer_name,
+            'ship_date': ship_date,
+            'due_date': due_date,
+            'invoice_number': invoice_number,
+            'total': total,
+            'status': st,
+            'balance': balance,
+            'totcustomer': totcustomer,
+            'paid': paid,
+            'sales_order_number': sales_order_number,
+        })
+
+    totalinvamount = invoices.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
+    totalbalance = invoices.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
+
+    context = {
+        'log_id': log_id,
+        'log_details': log_details,
+        'details': dash_details,
+        'allmodules': all_modules,
+        'reportData': reportData,
+        'startDate': startDate,
+        'endDate': endDate,
+        'report': report,
+        'status': status,
+        'totalinvamount': totalinvamount,
+        'totalbalance': totalbalance,
+        'totcustomer': totcustomer,
+        'status_filter': status_filter,
+    }
+
+    return render(request, 'zohomodules/Reports/invoice_report.html', context)
 
 
 
 def invoice_report_email(request):
-    if 'login_id' in request.session:
-        log_id = request.session.get('login_id')
-        if not log_id:
-            return redirect('/')
-    else:
+    if 'login_id' not in request.session:
+        return redirect('/')
+
+    log_id = request.session.get('login_id')
+    if not log_id:
         return redirect('/')
     
     try:
@@ -55583,256 +55346,136 @@ def invoice_report_email(request):
         
         if log_details.user_type == "Company":
             dash_details = CompanyDetails.objects.get(login_details=log_details)
-            print("dash_details:", dash_details)
-            
-            if request.method == 'POST':
-                emails_string = request.POST.get('email_ids')
-                email_message = request.POST.get('email_message')
-                
-                emails_list = [email.strip() for email in emails_string.split(',')]
-                
-                startDate = request.POST.get('from_date')
-                endDate = request.POST.get('to_date')
-                status = request.POST.get('status')
-                
-                currentDate = datetime.today().date()
-
-                reportData1 = []
-                total_amount = 0
-                total_balance = 0
-                
-                cust = Customer.objects.filter(company=dash_details)
-                totcustomer = cust.count()
-                
-                invoices = invoice.objects.filter(company=dash_details)
-                sales_order_number = SaleOrder.objects.filter(company=dash_details, customer__company=dash_details).values_list('sales_order_number', flat=True).first()
-                
-                if startDate and endDate:
-                    invoices = invoices.filter(expiration_date__range=[startDate, endDate])
-                
-                if status:
-                    if status == 'Draft':
-                        invoices = invoices.filter(status='Draft')
-                    elif status == 'Fully paid':
-                        invoices = invoices.filter(advanced_paid=F('grand_total'), status='Save')
-                    elif status == 'Not paid':
-                        invoices = invoices.filter(Q(advanced_paid=0) & Q(expiration_date__gt=currentDate), status='Save')
-                    elif status == 'Partially paid':
-                        invoices = invoices.filter(Q(advanced_paid__gt=0) & Q(advanced_paid__lt=F('grand_total')) & Q(expiration_date__gt=currentDate), status='Save')
-                    elif status == 'Overdue':
-                        invoices = invoices.filter(Q(expiration_date__lte=currentDate) & Q(advanced_paid__lt=F('grand_total')), status='Save')
-                
-                for s in invoices:
-                    customer_name = s.customer.first_name
-                    invoice_date = s.date
-                    print("invoice_date:", invoice_date)
-                    due_date = s.expiration_date
-                    print("due_date:", due_date)
-                    total_amount += s.grand_total
-                    print("total_amount:", total_amount)
-                    invoice_number = s.invoice_number
-                    print("invoice_number:", invoice_number)
-                    status = s.status
-                    print("status:", status)
-                    paid = s.advanced_paid
-                    print("ADVANCE", paid)
-                    if s.status == 'Draft':
-                        status = 'Draft'
-                        print("status:", status)
-                    elif s.advanced_paid == 0 and due_date > currentDate:
-                        status = 'Not Paid'
-                        print("status:", status)
-                    elif s.advanced_paid == s.grand_total:
-                        status = 'Fully Paid'
-                        print("status:", status)
-                    elif s.advanced_paid > 0 and s.advanced_paid < s.grand_total and due_date > currentDate:
-                        status = 'Partially Paid'
-                        print("status:", status)
-                    elif due_date < currentDate and s.advanced_paid <= s.grand_total:
-                        status = 'Overdue'
-                        print("status:", status)
-                    balance = s.balance
-                    print("balance:", balance)
-                    total = s.grand_total
-                    print("GRAND:", total)
-                    sales_order_number = SaleOrder.objects.filter(company=dash_details, customer=s.customer).values_list('sales_order_number', flat=True).first()
-                    totalinvamount = invoices.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
-                    totalbalance = invoices.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
-
-                    details = {
-                        'invoice_date': invoice_date,
-                        'customer_name': customer_name,
-                        'due_date': due_date,
-                        'invoice_number': invoice_number,
-                        'sales_order_number': sales_order_number,
-                        'total': total,
-                        'status': status,
-                        'balance': balance,
-                        'totcustomer': totcustomer,
-                        'totalinvamount': totalinvamount,
-                        'totalbalance': totalbalance,
-                        'paid': paid,
-                    }
-                    print("details:", details)
-                    reportData1.append(details)
-                    print("reportData1:", reportData1)
-                    
-
-                context = {
-                    'log_id': log_id,
-                    'log_details': log_details,
-                    'details': dash_details,
-                    'reportData': reportData1,
-                    'startDate': None,
-                    'endDate': None,
-                    'totcustomer': totcustomer, 
-                    'totalinvamount': totalinvamount,
-                    'totalbalance': totalbalance,
-                    'total': total,
-                }
-                
-                template_path = 'zohomodules/Reports/inv_pdf_report.html'
-                template = get_template(template_path)
-                html = template.render(context)
-                result = BytesIO()
-                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
-                pdf = result.getvalue()
-                filename = f'Report_invoice_Details'
-                subject = f"Report_invoice_Details"
-                email = EmailMsg(subject, f"Hi,\nPlease find the attached Report for - recinvoice Details. \n{email_message}\n\n--\nRegards,\n{dash_details.company_name}\n{dash_details.address}\n{dash_details.state} - {dash_details.country}\n{dash_details.contact}", from_email=settings.EMAIL_HOST_USER, to=emails_list)
-                email.attach(filename, pdf, "application/pdf")
-                email.send(fail_silently=False)
-                
-                return redirect('view_invoice_report')
-    
-    except (LoginDetails.DoesNotExist, CompanyDetails.DoesNotExist, ZohoModules.DoesNotExist):
-        return redirect('/')
-
-
-        if log_details.user_type == "Staff":
+        elif log_details.user_type == "Staff":
             company_details = StaffDetails.objects.get(login_details=log_details)
-            comp = CompanyDetails.objects.get(id=company_details.company.id)
-            allmodules = ZohoModules.objects.get(company=company_details.company, status='New')
+            dash_details = CompanyDetails.objects.get(id=company_details.company.id)
+        else:
+            return redirect('/')
 
-            if request.method == 'POST':
-                emails_string = request.POST.get('email_ids')
-                email_message = request.POST.get('email_message')
-                
-                emails_list = [email.strip() for email in emails_string.split(',')]
-                
-                startDate = request.POST.get('from_date')
-                endDate = request.POST.get('to_date')
-                status = request.POST.get('status')
-                
-                currentDate = datetime.today().date()
+        print("dash_details:", dash_details)
 
-                reportData1 = []
-                total_amount = 0
-                total_balance = 0
-                
-                cust = Customer.objects.filter(company=dash_details)
-                totcustomer = cust.count()
-                
-                invoices = invoice.objects.filter(company=dash_details)
-                sales_order_number = SaleOrder.objects.filter(company=dash_details, customer__company=dash_details).values_list('sales_order_number', flat=True).first()
-                
-                if startDate and endDate:
-                    invoices = invoices.filter(expiration_date__range=[startDate, endDate])
-                
-                if status:
-                    if status == 'Draft':
-                        invoices = invoices.filter(status='Draft')
-                    elif status == 'Fully paid':
-                        invoices = invoices.filter(advanced_paid=F('grand_total'), status='Save')
-                    elif status == 'Not paid':
-                        invoices = invoices.filter(Q(advanced_paid=0) & Q(expiration_date__gt=currentDate), status='Save')
-                    elif status == 'Partially paid':
-                        invoices = invoices.filter(Q(advanced_paid__gt=0) & Q(advanced_paid__lt=F('grand_total')) & Q(expiration_date__gt=currentDate), status='Save')
-                    elif status == 'Overdue':
-                        invoices = invoices.filter(Q(expiration_date__lte=currentDate) & Q(advanced_paid__lt=F('grand_total')), status='Save')
-                
-                for s in invoices:
-                    customer_name = s.customer.first_name
-                    invoice_date = s.date
-                    print("invoice_date:", invoice_date)
-                    due_date = s.expiration_date
-                    print("due_date:", due_date)
-                    total_amount += s.grand_total
-                    print("total_amount:", total_amount)
-                    invoice_number = s.invoice_number
-                    print("invoice_number:", invoice_number)
-                    status = s.status
+        if request.method == 'POST':
+            emails_string = request.POST.get('email_ids')
+            email_message = request.POST.get('email_message')
+            emails_list = [email.strip() for email in emails_string.split(',')]
+            startDate = request.POST.get('from_date')
+            endDate = request.POST.get('to_date')
+            status = request.POST.get('status')
+            
+            currentDate = datetime.today().date()
+
+            reportData1 = []
+            total_amount = 0
+            total_balance = 0
+            
+            cust = Customer.objects.filter(company=dash_details)
+            totcustomer = cust.count()
+            
+            invoices = invoice.objects.filter(company=dash_details)
+
+            if startDate and endDate:
+                invoices = invoices.filter(expiration_date__range=[startDate, endDate])
+            
+            if status:
+                if status == 'Draft':
+                    invoices = invoices.filter(status='Draft')
+                elif status == 'Fully paid':
+                    invoices = invoices.filter(advanced_paid=F('grand_total'), status='Save')
+                elif status == 'Not paid':
+                    invoices = invoices.filter(Q(advanced_paid=0) & Q(expiration_date__gt=currentDate), status='Save')
+                elif status == 'Partially paid':
+                    invoices = invoices.filter(Q(advanced_paid__gt=0) & Q(advanced_paid__lt=F('grand_total')) & Q(expiration_date__gt=currentDate), status='Save')
+                elif status == 'Overdue':
+                    invoices = invoices.filter(Q(expiration_date__lte=currentDate) & Q(advanced_paid__lt=F('grand_total')), status='Save')
+            
+            for s in invoices:
+                customer_name = s.customer.first_name
+                invoice_date = s.date
+                print("invoice_date:", invoice_date)
+                due_date = s.expiration_date
+                print("due_date:", due_date)
+                total_amount += s.grand_total
+                print("total_amount:", total_amount)
+                invoice_number = s.invoice_number
+                print("invoice_number:", invoice_number)
+                status = s.status
+                print("status:", status)
+                paid = s.advanced_paid
+                print("ADVANCE", paid)
+                if s.status == 'Draft':
+                    status = 'Draft'
                     print("status:", status)
-                    paid = s.advanced_paid
-                    print("ADVANCE", paid)
-                    if s.status == 'Draft':
-                        status = 'Draft'
-                        print("status:", status)
-                    elif s.advanced_paid == 0 and due_date > currentDate:
-                        status = 'Not Paid'
-                        print("status:", status)
-                    elif s.advanced_paid == s.grand_total:
-                        status = 'Fully Paid'
-                        print("status:", status)
-                    elif s.advanced_paid > 0 and s.advanced_paid < s.grand_total and due_date > currentDate:
-                        status = 'Partially Paid'
-                        print("status:", status)
-                    elif due_date < currentDate and s.advanced_paid <= s.grand_total:
-                        status = 'Overdue'
-                        print("status:", status)
-                    balance = s.balance
-                    print("balance:", balance)
-                    total = s.grand_total
-                    print("GRAND:", total)
-                    sales_order_number = SaleOrder.objects.filter(company=dash_details, customer=s.customer).values_list('sales_order_number', flat=True).first()
-                    totalinvamount = invoices.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
-                    totalbalance = invoices.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
+                elif s.advanced_paid == 0 and due_date > currentDate:
+                    status = 'Not Paid'
+                    print("status:", status)
+                elif s.advanced_paid == s.grand_total:
+                    status = 'Fully Paid'
+                    print("status:", status)
+                elif s.advanced_paid > 0 and s.advanced_paid < s.grand_total and due_date > currentDate:
+                    status = 'Partially Paid'
+                    print("status:", status)
+                elif due_date < currentDate and s.advanced_paid <= s.grand_total:
+                    status = 'Overdue'
+                    print("status:", status)
+                balance = s.balance
+                print("balance:", balance)
+                total = s.grand_total
+                print("GRAND:", total)
+                sales_order_number = SaleOrder.objects.filter(company=dash_details, customer=s.customer).values_list('sales_order_number', flat=True).first()
+                totalinvamount = invoices.aggregate(totalinvamount=Sum('grand_total'))['totalinvamount'] or 0
+                totalbalance = invoices.aggregate(totalbalance=Sum('balance'))['totalbalance'] or 0
 
-                    details = {
-                        'invoice_date': invoice_date,
-                        'customer_name': customer_name,
-                        'due_date': due_date,
-                        'invoice_number': invoice_number,
-                        'sales_order_number': sales_order_number,
-                        'total': total,
-                        'status': status,
-                        'balance': balance,
-                        'totcustomer': totcustomer,
-                        'totalinvamount': totalinvamount,
-                        'totalbalance': totalbalance,
-                        'paid': paid,
-                    }
-                    print("details:", details)
-                    reportData1.append(details)
-                    print("reportData1:", reportData1)
-                    
-
-                context = {
-                    'log_id': log_id,
-                    'log_details': log_details,
-                    'details': dash_details,
-                    'reportData': reportData1,
-                    'startDate': None,
-                    'endDate': None,
-                    'totcustomer': totcustomer, 
+                details = {
+                    'invoice_date': invoice_date,
+                    'customer_name': customer_name,
+                    'due_date': due_date,
+                    'invoice_number': invoice_number,
+                    'sales_order_number': sales_order_number,
+                    'total': total,
+                    'status': status,
+                    'balance': balance,
+                    'totcustomer': totcustomer,
                     'totalinvamount': totalinvamount,
                     'totalbalance': totalbalance,
-                    'total': total,
+                    'paid': paid,
                 }
-                
-                template_path = 'zohomodules/Reports/inv_pdf_report.html'
-                template = get_template(template_path)
-                html = template.render(context)
-                result = BytesIO()
-                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
-                pdf = result.getvalue()
-                filename = f'Report_invoice_Details'
-                subject = f"Report_invoice_Details"
-                email = EmailMsg(subject, f"Hi,\nPlease find the attached Report for - recinvoice Details. \n{email_message}\n\n--\nRegards,\n{dash_details.company_name}\n{dash_details.address}\n{dash_details.state} - {dash_details.country}\n{dash_details.contact}", from_email=settings.EMAIL_HOST_USER, to=emails_list)
-                email.attach(filename, pdf, "application/pdf")
-                email.send(fail_silently=False)
-                
-                return redirect('view_invoice_report')
+                print("details:", details)
+                reportData1.append(details)
+                print("reportData1:", reportData1)
+            
+            context = {
+                'log_id': log_id,
+                'log_details': log_details,
+                'details': dash_details,
+                'reportData': reportData1,
+                'startDate': None,
+                'endDate': None,
+                'totcustomer': totcustomer, 
+                'totalinvamount': totalinvamount,
+                'totalbalance': totalbalance,
+                'total': total,
+            }
+            
+            template_path = 'zohomodules/Reports/inv_pdf_report.html'
+            template = get_template(template_path)
+            html = template.render(context)
+            result = BytesIO()
+            pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+            pdf = result.getvalue()
+            filename = f'Report_invoice_Details'
+            subject = f"Report_invoice_Details"
+            email = EmailMsg(
+                subject,
+                f"Hi,\nPlease find the attached Report for - recinvoice Details. \n{email_message}\n\n--\nRegards,\n{dash_details.company_name}\n{dash_details.address}\n{dash_details.state} - {dash_details.country}\n{dash_details.contact}",
+                from_email=settings.EMAIL_HOST_USER,
+                to=emails_list
+            )
+            email.attach(filename, pdf, "application/pdf")
+            email.send(fail_silently=False)
+            
+            return redirect('view_invoice_report')
     
     except (LoginDetails.DoesNotExist, CompanyDetails.DoesNotExist, ZohoModules.DoesNotExist):
-        return redirect('/')
+        pass
+
+    return render(request, 'invoice_report.html')
